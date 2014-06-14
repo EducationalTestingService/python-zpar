@@ -85,7 +85,7 @@ Detailed usage with comments is shown in the included file `zpar_example.py`. Ru
 The repository provides an python XML-RPC implementation of a ZPar server that makes it easier to process multiple sentences and files by loading the models just once (via the ctypes interface) and allowing clients to connect and request analyses. The implementation is in the file `zpar_server.py`. The server is quite flexible and allows loading only the models that you need. In addition, it takes care of any and all conversions that are needed to communicate with the ctypes interface. Here's an example of how to start the server with only the tagger and the dependency parser models loaded:
 
 ```bash
-$> python zpar_server.py --zpar dist --modeldir english-models --models tagger depparser  /scratch/nmadnani/zpar-new
+$> python zpar_server.py --zpar dist --modeldir english-models --models tagger depparser
 INFO:Initializing server ...
 Loading tagger from english-models/tagger
 Loading model... done.
