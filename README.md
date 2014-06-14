@@ -71,6 +71,7 @@ else:
 ```
 
 The above code sample produces the following output:
+
 ```
 Loading tagger from english-models/tagger
 Loading model... done.
