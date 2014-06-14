@@ -19,7 +19,7 @@ Therefore, in order to build python-zpar from scratch, you need to download the 
 
 I have included pre-compiled 64-bit shared library modules for both linux and mac (the two platforms python-zpar was tested on) in the repository. The linux version was compiled on an x86_64 machine running RHEL 6.5. The mac version was compiled on a Late 2013 Macbook Pro running OS X Mavericks 10.9.3. Although I have recommended the modules for convenience, I strongly recommend that you take the time compile a native module for your machine.
 
-If you are curious about what the C functions in the shared library module look like, the source file is included in the repository.
+If you are curious about what the C functions in the shared library module look like, see `src/zpar.lib.cpp`.
 
 ### Usage
 
