@@ -6,18 +6,10 @@ I wrote python-zpar since I needed a fast and efficient parser for my NLP work w
 
 python-zpar uses [ctypes](https://docs.python.org/3.3/library/ctypes.html), a very cool foreign function library bundled with Python that allows calling functions in C DLLs or shared libraries directly.
 
-
 ### Installation
 In order for python-zpar to work, it requires C functions that can be called directly. Since the only user-exposed entry point in ZPar is the command line client, I needed to write a new file that would have functions built on top of the ZPar functionality but expose them in a way that ctypes could understand.
 
-Therefore, in order to build python-zpar from scratch, you need to download the ZPar source and patch it with the patch that I provide. Here's how to do that:
-
-1. Download the ZPar source from [sourceforge](http://www.sourceforge.net/projects/zpar).
-2. Unzip the source.
-3. Change into the `zpar` directory that is created and type: `patch -p1 < [path to zpar.lib.patch]`, where `zpar.lib.patch` is the patch file included in this repository.
-4. Now type `make zpar.so`. This will compile the shared library module that python-zpar requires under `dist/zpar.so`.
-
-I have included pre-compiled 64-bit shared library modules for both linux and mac (the two platforms python-zpar was tested on) in the repository. The linux version was compiled on an x86_64 machine running RHEL 6.5. The mac version was compiled on a Late 2013 Macbook Pro running OS X Mavericks 10.9.3. Although I have recommended the modules for convenience, I strongly recommend that you take the time compile a native module for your machine.
+Therefore, in order to build python-zpar from scratch, we need to download the ZPar source and patch it with new functionality. I have written a makefile that does this automatically. Just type `make` in the top level directory of the cloned repository. This should download the ZPar source, patch it and build the shared library module `dist/zpar.so`.
 
 If you are curious about what the C functions in the shared library module look like, see `src/zpar.lib.cpp`.
 
@@ -119,7 +111,7 @@ INFO:Dep Parsing file test.txt into
 
 ```
 
-Note that python-zpar and all of the example scripts should work with both Python 2.7 and Python 3.3.
+Note that python-zpar and all of the example scripts should work with both Python 2.7 and Python 3.3. I have tested python-zpar on both Linux and Mac but not on Windows.
 
 ### ToDo
 
