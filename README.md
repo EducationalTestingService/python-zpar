@@ -2,9 +2,9 @@
 
 **python-zpar** is a python wrapper around the [ZPar parser](http://www.sutd.edu.sg/cmsresource/faculty/yuezhang/zpar.html). ZPar was written by [Yue Zhang](http://www.sutd.edu.sg/yuezhang.aspx) while he was at Oxford University. According to its home page: *ZPar is a statistical natural language parser, which performs syntactic analysis tasks including word segmentation, part-of-speech tagging and parsing. ZPar supports multiple languages and multiple grammar formalisms. ZPar has been most heavily developed for Chinese and English, while it provides generic support for other languages. ZPar is fast, processing above 50 sentences per second using the standard Penn Teebank (Wall Street Journal) data.*
 
-I wrote this wrapper since I needed a fast and efficient parser for my NLP work which is primarily done in Python and not C++. I wanted to be able to use this parser directly from Python without having to create a bunch of files and running them through subprocesses. python-zpar not only provides a simply python wrapper but also provides an XML-RPC ZPar server to make batch-processing of large files easier.
+I wrote python-zpar since I needed a fast and efficient parser for my NLP work which is primarily done in Python and not C++. I wanted to be able to use this parser directly from Python without having to create a bunch of files and running them through subprocesses. python-zpar not only provides a simply python wrapper but also provides an XML-RPC ZPar server to make batch-processing of large files easier.
 
-python-zpar` uses [ctypes](https://docs.python.org/3.3/library/ctypes.html), a very cool foreign function library bundled with Python that allows calling functions in C DLLs or shared libraries directly.
+python-zpar uses [ctypes](https://docs.python.org/3.3/library/ctypes.html), a very cool foreign function library bundled with Python that allows calling functions in C DLLs or shared libraries directly.
 
 
 ### Installation
