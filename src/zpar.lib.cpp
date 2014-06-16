@@ -114,6 +114,15 @@ extern "C" int load_tagger(const char *sFeaturePath) {
 
 // The function to load the constituency parser model
 extern "C" int load_parser(const char *sFeaturePath) {
+
+    // If the tagger is not already loaded, then we need to load
+    // it since the parser requires the tagger
+    if (!zpm->tagger) {
+        if (load_tagger(sFeaturePath)) {
+            return 1;
+        }
+    }
+
     CConParser *conparser;
     std::string sConParserFeatureFile = std::string(sFeaturePath) + "/conparser";
     std::cerr << "Loading constituency parser from " << sConParserFeatureFile << std::endl;
@@ -154,7 +163,7 @@ extern "C" int load_models(const char *sFeaturePath) {
 }
 
 // Function to tag a sentence
-extern "C" const char *tag_sentence(const char *input_sentence)
+extern "C" const char* tag_sentence(const char *input_sentence)
 {
 
     // create a temporary string stream from the input char *
@@ -180,7 +189,7 @@ extern "C" const char *tag_sentence(const char *input_sentence)
 }
 
 // Function to constituency parse a sentence
-extern "C" const char *parse_sentence(const char *input_sentence)
+extern "C" const char* parse_sentence(const char *input_sentence)
 {
 
     // create a temporary string stream from the input char *
@@ -210,7 +219,7 @@ extern "C" const char *parse_sentence(const char *input_sentence)
 }
 
 // Function to dependency parse a sentence
-extern "C" const char *dep_parse_sentence(const char *input_sentence)
+extern "C" const char* dep_parse_sentence(const char *input_sentence)
 {
 
     // create a temporary string stream from the input char *

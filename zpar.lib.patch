@@ -5,51 +5,51 @@ diff -rupN zpar-old/Makefile zpar/Makefile
  #
  # joint taggers include the following implementations
  # agendachart: combining agenda and chart, this is the best system - reproduce paper
--# 
+-#
 +#
  # taggers on segmented sentences include the following implementations
  # segmented: the unidirectional trigram tagger
  CHINESE_TAGGER_IMPL = agenda
- 
+
  # Chinese dependency parser
  #
--# currently support eisner, covington, nivre, combined and joint implementations 
+-# currently support eisner, covington, nivre, combined and joint implementations
 +# currently support eisner, covington, nivre, combined and joint implementations
  CHINESE_DEPPARSER_IMPL = arceager
  CHINESE_DEPPARSER_LABELED = true
  CHINESE_DEPLABELER_IMPL = naive
- 
--# currently support sr implementations 
+
+-# currently support sr implementations
 +# currently support sr implementations
  CHINESE_CONPARSER_IMPL = jcad
- 
+
  # currently support only agenda
  ENGLISH_TAGGER_IMPL = collins
- 
--# currently support eisner, covington, nivre, combined implementations 
+
+-# currently support eisner, covington, nivre, combined implementations
 +# currently support eisner, covington, nivre, combined implementations
  ENGLISH_DEPPARSER_IMPL =arceager
  ENGLISH_DEPPARSER_LABELED = true
  ENGLISH_DEPLABELER_IMPL = naive
--# currently support sr implementations 
+-# currently support sr implementations
 +# currently support sr implementations
  ENGLISH_CONPARSER_IMPL = muhua
- 
+
  #================================================================
 @@ -81,13 +81,13 @@ include Makefile.common
  #================================================================
  #
  # compiler commands
--# 
+-#
 +#
  #================================================================
- 
+
  INCLUDES = -I$(SRC_INCLUDES)
- 
+
  CXX = g++
 -CXXFLAGS = -w -W -O3 $(INCLUDES) $(DEBUG)
 +CXXFLAGS = -w -W -O3 $(INCLUDES) $(DEBUG) -fPIC
- 
+
  LD=$(CXX)
  LDFLAGS =
 @@ -177,6 +177,7 @@ OBJECT_ENGLISH_CONPARSER = $(OBJECT_DIR)
@@ -57,7 +57,7 @@ diff -rupN zpar-old/Makefile zpar/Makefile
  include Makefile.zpar.en
  include Makefile.zpar.ge
 +include Makefile.lib.zpar
- 
+
  #----------------------------------------------------------------
  #
 diff -rupN zpar-old/Makefile.lib.zpar zpar/Makefile.lib.zpar
@@ -203,6 +203,15 @@ diff -rupN zpar-old/src/english/zpar.lib.cpp zpar/src/english/zpar.lib.cpp
 +
 +// The function to load the constituency parser model
 +extern "C" int load_parser(const char *sFeaturePath) {
++
++    // If the tagger is not already loaded, then we need to load
++    // it since the parser requires the tagger
++    if (!zpm->tagger) {
++        if (load_tagger(sFeaturePath)) {
++            return 1;
++        }
++    }
++
 +    CConParser *conparser;
 +    std::string sConParserFeatureFile = std::string(sFeaturePath) + "/conparser";
 +    std::cerr << "Loading constituency parser from " << sConParserFeatureFile << std::endl;
@@ -485,26 +494,26 @@ diff -rupN zpar-old/src/include/reader.h zpar/src/include/reader.h
 @@ -18,41 +18,56 @@
  #include "file_utils.h"
  #include "linguistics/sentence_string.h"
- 
+
 +#include <sstream>
 +
  /*===============================================================
   *
   * CSentenceReader - read sentence
   *
-- * Specify a file name in the constructor. If no file name is specified, 
+- * Specify a file name in the constructor. If no file name is specified,
 + * Specify a file name in the constructor. If no file name is specified,
   * the reader will read from the standard input.
   *
   * readRawSentence:
-- *  - The input file should contain tokenised sentences each in a line, 
-- *    with space separated words and punctuations. 
+- *  - The input file should contain tokenised sentences each in a line,
+- *    with space separated words and punctuations.
 + *  - The input file should contain tokenised sentences each in a line,
 + *    with space separated words and punctuations.
   *    In the Chinese case, each character should be separated by space.
   *
   *==============================================================*/
- 
+
  class CSentenceReader {
     protected:
 -      std::istream *m_iStream;
@@ -514,9 +523,9 @@ diff -rupN zpar-old/src/include/reader.h zpar/src/include/reader.h
 +        int m_nLine;
     public:
 -      // constructor and destructor method
--      CSentenceReader(const std::string &sFileName="") { 
--         if (sFileName.empty()) 
--	   m_iStream = &std::cin; 
+-      CSentenceReader(const std::string &sFileName="") {
+-         if (sFileName.empty())
+-	   m_iStream = &std::cin;
 -         else {
 -            if (!FileExists(sFileName)) THROW("File " << sFileName << " not found.");
 -            m_iStream=new std::ifstream(sFileName.c_str());
@@ -525,7 +534,7 @@ diff -rupN zpar-old/src/include/reader.h zpar/src/include/reader.h
 -      };
 -      virtual ~CSentenceReader() {
 -         if (m_iStream != &std::cin) {
--            ((std::ifstream*)m_iStream)->close(); 
+-            ((std::ifstream*)m_iStream)->close();
 -            delete m_iStream;
 -         }
 -      };

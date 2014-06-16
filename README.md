@@ -23,7 +23,7 @@ If you are curious about what the C functions in the shared library module look 
 
 ### Usage
 
-To use python-zpar, you need the English models for ZPar. They can be downloaded from where. There are three models: a part-of-speech tagger, a constituency parser, and a dependency parser. For the purpose of the examples below, the models are in the `english-models` directory under the `zpar` directory.
+To use python-zpar, you need the English models for ZPar. They can be downloaded from [here](http://sourceforge.net/projects/zpar). There are three models: a part-of-speech tagger, a constituency parser, and a dependency parser. For the purpose of the examples below, the models are in the `english-models` directory under the `zpar` directory.
 
 Here's a small example of how to use python-zpar:
 
