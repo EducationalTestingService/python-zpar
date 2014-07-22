@@ -3,8 +3,11 @@
  * zpar.lib.cpp - a library that can be used by python          *
  *                                                              *
  * Author: Nitin Madnani                                        *
- *                                                              *
  * Educational Testing Service, Princeton, NJ                   *
+ *
+ * Author: Nitin Madnani                                        *
+ * Educational Testing Service, Princeton, NJ                   *
+
  *                                                              *
  ****************************************************************/
 

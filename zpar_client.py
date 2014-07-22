@@ -6,8 +6,6 @@ import six
 import socket
 import sys
 
-from six import print_
-
 if __name__ == '__main__':
 
     # set up an argument parser

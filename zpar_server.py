@@ -14,6 +14,7 @@ else:
 class ModelNotFoundError(Exception):
 
     def __init__(self, model_name, model_path):
+        Exception.__init__(self)
         self.model_name = model_name
         self.model_path = model_path
 
