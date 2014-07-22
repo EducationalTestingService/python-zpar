@@ -4,10 +4,6 @@
  *                                                              *
  * Author: Nitin Madnani                                        *
  * Educational Testing Service, Princeton, NJ                   *
- *
- * Author: Nitin Madnani                                        *
- * Educational Testing Service, Princeton, NJ                   *
-
  *                                                              *
  ****************************************************************/
 
