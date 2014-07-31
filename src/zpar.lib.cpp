@@ -59,7 +59,7 @@ zparModel_t *zpm = new zparModel_t();
 
 // a utility function to output tagged data in the usual
 // "WORD/TAG" format as expected
-const char *format_tagged_vector(CTwoStringVector *tagged_sent)
+std::string format_tagged_vector(CTwoStringVector *tagged_sent)
 {
 
     CTwoStringVector::const_iterator it;
@@ -84,13 +84,13 @@ const char *format_tagged_vector(CTwoStringVector *tagged_sent)
     }
 
     std::string outstr(oss.str());
-    return outstr.c_str();
+    return outstr;
 
 }
 
 // A utility function to format the dependncy output
 // in CoNLL format
-const char *format_dependency_tree(CDependencyParse *parsed_sent)
+std::string format_dependency_tree(CDependencyParse *parsed_sent)
 {
 
     int i;
@@ -98,7 +98,7 @@ const char *format_dependency_tree(CDependencyParse *parsed_sent)
     std::copy(parsed_sent->begin(), parsed_sent->end(), std::ostream_iterator<CLabeledDependencyTreeNode>(oss, "\n"));
 
     std::string outstr(oss.str());
-    return outstr.c_str();
+    return outstr;
 
 }
 
@@ -168,7 +168,7 @@ extern "C" int load_models(const char *sFeaturePath) {
 }
 
 // Function to tag a sentence
-extern "C" const char* tag_sentence(const char *input_sentence)
+extern "C" char* tag_sentence(const char *input_sentence)
 {
 
     // create a temporary string stream from the input char *
@@ -190,7 +190,16 @@ extern "C" const char* tag_sentence(const char *input_sentence)
     tagger->tag(input_sent, tagged_sent);
 
     // format the tagged sentence properly and return
-    return format_tagged_vector(tagged_sent);
+    std::string tagvec = format_tagged_vector(tagged_sent);
+    int tagveclen = tagvec.length();
+
+    if (zpm->output_buffer != NULL) {
+        delete zpm->output_buffer;
+        zpm->output_buffer = NULL;
+    }
+    zpm->output_buffer = new char[tagveclen + 1];
+    strcpy(zpm->output_buffer, tagvec.c_str());
+    return zpm->output_buffer;
 }
 
 // Function to constituency parse a sentence
@@ -232,7 +241,7 @@ extern "C" char* parse_sentence(const char *input_sentence)
 }
 
 // Function to dependency parse a sentence
-extern "C" const char* dep_parse_sentence(const char *input_sentence)
+extern "C" char* dep_parse_sentence(const char *input_sentence)
 {
 
     // create a temporary string stream from the input char *
@@ -257,8 +266,16 @@ extern "C" const char* dep_parse_sentence(const char *input_sentence)
     depparser->parse(*tagged_sent, parsed_sent);
 
     // now output the formatted dependency tree
-    return format_dependency_tree(parsed_sent);
+    std::string deptree = format_dependency_tree(parsed_sent);
+    int deptreelen = deptree.length();
 
+    if (zpm->output_buffer != NULL) {
+        delete zpm->output_buffer;
+        zpm->output_buffer = NULL;
+    }
+    zpm->output_buffer = new char[deptreelen + 1];
+    strcpy(zpm->output_buffer, deptree.c_str());
+    return zpm->output_buffer;
 }
 
 // Function to tag all sentence in the given input file
@@ -296,7 +313,8 @@ extern "C" void tag_file(const char *sInputFile, const char *sOutputFile)
         tagger->tag(input_sent, tagged_sent);
 
         // write the formatted sentence to the output file
-        fprintf(outfp, "%s\n", format_tagged_vector(tagged_sent));
+        std::string tagvec = format_tagged_vector(tagged_sent);
+        fprintf(outfp, "%s\n", tagvec.c_str());
     }
 
     // close the output file
@@ -340,7 +358,8 @@ extern "C" void parse_file(const char *sInputFile, const char *sOutputFile)
         tagger->tag(input_sent, tagged_sent);
         conparser->parse(*tagged_sent, parsed_sent);
 
-        fprintf(outfp, "%s\n", parsed_sent->str_unbinarized().c_str());
+        std::string parse = parsed_sent->str_unbinarized();
+        fprintf(outfp, "%s\n", parse.c_str());
     }
 
     // close the output file
@@ -384,7 +403,8 @@ extern "C" void dep_parse_file(const char *sInputFile, const char *sOutputFile)
         tagger->tag(input_sent, tagged_sent);
         depparser->parse(*tagged_sent, parsed_sent);
 
-        fprintf(outfp, "%s\n", format_dependency_tree(parsed_sent));
+        std::string deptree = format_dependency_tree(parsed_sent);
+        fprintf(outfp, "%s\n", deptree.c_str());
     }
 
     // close the output file
