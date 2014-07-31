@@ -49,7 +49,7 @@ struct zparModel_t
         if (depparser)
             delete (CDepParser *)depparser;
         if (output_buffer) {
-            free(output_buffer);
+            delete output_buffer;
         }
     };
 };
@@ -219,14 +219,15 @@ extern "C" char* parse_sentence(const char *input_sentence)
     conparser->parse(*tagged_sent, parsed_sent);
 
     // now put the tagged_sent into a string stream
-    const char * parse;
-    parse = parsed_sent->str_unbinarized().c_str();
+    std::string parse = parsed_sent->str_unbinarized();
+    int parselen = parse.length();
+
     if (zpm->output_buffer != NULL) {
-        free(zpm->output_buffer);
+        delete zpm->output_buffer;
         zpm->output_buffer = NULL;
     }
-    zpm->output_buffer = new char[strlen(parse) + 1];
-    strcpy(zpm->output_buffer, parse);
+    zpm->output_buffer = new char[parselen + 1];
+    strcpy(zpm->output_buffer, parse.c_str());
     return zpm->output_buffer;
 }
 
