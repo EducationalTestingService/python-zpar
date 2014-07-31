@@ -82,6 +82,10 @@ if __name__ == '__main__':
         sys.stderr.write('Cannot find tagger model at {}\n'.format(args.modeldir))
         zpar.unload_models()
         sys.exit(1)
+    if load_parser(args.modeldir.encode('utf-8')):
+        sys.stderr.write('Cannot find parser model at {}\n'.format(args.modeldir))
+        zpar.unload_models()
+        sys.exit(1)
     if load_depparser(args.modeldir.encode('utf-8')):
         sys.stderr.write('Cannot find depparser model at {}\n'.format(args.modeldir))
         zpar.unload_models()
@@ -93,6 +97,12 @@ if __name__ == '__main__':
     # to convert the output back from bytes to strings.
     tagged_sent = tag_sentence("I am going to the market.\n ".encode("utf-8"))
     print_(tagged_sent.decode('utf-8'))
+
+    parsed_sent = parse_sentence("I am going to the market.\n ".encode("utf-8"))
+    print_(parsed_sent.decode('utf-8'))
+
+    parsed_sent = parse_sentence("Would you like to come with me?\n ".encode("utf-8"))
+    print_(parsed_sent.decode('utf-8'))
 
     # Compute the dependency parse of the sentence
     dep_parsed_sent = dep_parse_sentence("I am going to the market.\n ".encode("utf-8"))

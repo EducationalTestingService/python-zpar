@@ -31,11 +31,13 @@ struct zparModel_t
     void *tagger;
     void *conparser;
     void *depparser;
+    char *output_buffer;
 
     zparModel_t() {
         tagger = NULL;
         conparser = NULL;
         depparser = NULL;
+        output_buffer = NULL;
     };
 
     ~zparModel_t() {
@@ -45,6 +47,9 @@ struct zparModel_t
             delete (CConParser *)conparser;
         if (depparser)
             delete (CDepParser *)depparser;
+        if (output_buffer) {
+            free(output_buffer);
+        }
     };
 };
 
@@ -188,7 +193,7 @@ extern "C" const char* tag_sentence(const char *input_sentence)
 }
 
 // Function to constituency parse a sentence
-extern "C" const char* parse_sentence(const char *input_sentence)
+extern "C" char* parse_sentence(const char *input_sentence)
 {
 
     // create a temporary string stream from the input char *
@@ -213,8 +218,14 @@ extern "C" const char* parse_sentence(const char *input_sentence)
     conparser->parse(*tagged_sent, parsed_sent);
 
     // now put the tagged_sent into a string stream
-    return parsed_sent->str_unbinarized().c_str();
-
+    const char * parse;
+    parse = parsed_sent->str_unbinarized().c_str();
+    if (zpm->output_buffer != NULL) {
+        free(zpm->output_buffer);
+    }
+    zpm->output_buffer = new char[strlen(parse)+1];
+    strcpy(zpm->output_buffer, parse);
+    return zpm->output_buffer;
 }
 
 // Function to dependency parse a sentence
