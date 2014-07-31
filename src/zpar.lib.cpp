@@ -17,6 +17,7 @@
 #include "reader.h"
 #include "writer.h"
 #include "stdlib.h"
+#include <cstring>
 #include <iterator>
 #include <sstream>
 
@@ -222,8 +223,9 @@ extern "C" char* parse_sentence(const char *input_sentence)
     parse = parsed_sent->str_unbinarized().c_str();
     if (zpm->output_buffer != NULL) {
         free(zpm->output_buffer);
+        zpm->output_buffer = NULL;
     }
-    zpm->output_buffer = new char[strlen(parse)+1];
+    zpm->output_buffer = new char[strlen(parse) + 1];
     strcpy(zpm->output_buffer, parse);
     return zpm->output_buffer;
 }
