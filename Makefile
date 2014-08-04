@@ -4,8 +4,8 @@ clean:
 	rm -rf /tmp/zpar
 	rm -f /tmp/zpar.zip
 
-python-zpar: #clean /tmp/zpar.zip
-#	unzip -q /tmp/zpar.zip -d /tmp
+python-zpar: clean /tmp/zpar.zip
+	unzip -q /tmp/zpar.zip -d /tmp
 	cp src/zpar.lib.cpp /tmp/zpar/src/english
 	cp src/Makefile.lib.zpar /tmp/zpar
 	cp src/Makefile /tmp/zpar
