@@ -113,9 +113,14 @@ INFO:Dep Parsing file test.txt into
 
 Note that python-zpar and all of the example scripts should work with both Python 2.7 and Python 3.3. I have tested python-zpar on both Linux and Mac but not on Windows.
 
+### Node.js version
+If you want to use ZPar in your node.js app, check out my other project [node-zpar](http://github.com/EducationalTestingService/node-zpar).
+
+
 ### License
 
 Although python-zpar is licensed under the MIT license - which means that you can do whatever you want with the wrapper code - ZPar itself is licensed under GPL v3. 
+
 
 ### ToDo
 
