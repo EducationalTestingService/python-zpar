@@ -13,6 +13,8 @@ Therefore, in order to build python-zpar from scratch, we need to download the Z
 
 If you are curious about what the C functions in the shared library module look like, see `src/zpar.lib.cpp`.
 
+You will need to install `gcc` using [macports](http://www.macports.org) if you are using OS X. 
+
 ### Usage
 
 To use python-zpar, you need the English models for ZPar. They can be downloaded from [here](http://sourceforge.net/projects/zpar). There are three models: a part-of-speech tagger, a constituency parser, and a dependency parser. For the purpose of the examples below, the models are in the `english-models` directory under the `zpar` directory.
