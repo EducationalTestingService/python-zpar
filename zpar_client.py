@@ -60,14 +60,14 @@ if __name__ == '__main__':
         logging.info("Output: {}".format(tagged_sent))
 
         logging.info('Dep Parsing "{}"'.format(test_sentence))
-        dep_parsed_sent = proxy.dep_parse_sentence(test_sentence)
+        dep_parsed_sent = proxy.parse_sentence(test_sentence)
         logging.info("Output: {}".format(dep_parsed_sent))
 
         logging.info('Tagging file {} into {}'.format(test_file, tag_outfile))
         proxy.tag_file(test_file, tag_outfile)
 
         logging.info('Dep Parsing file {} into {}'.format(test_file, dep_outfile))
-        proxy.dep_parse_file(test_file, dep_outfile)
+        proxy.parse_file(test_file, dep_outfile)
 
     except socket.error as err:
         sys.stderr.write("{}\n".format(err))

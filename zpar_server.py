@@ -1,10 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+
 import argparse
-import ctypes as c
 import logging
 import os
 import six
 import sys
+
+from zpar import ZPar
 
 if six.PY2:
     from SimpleXMLRPCServer import SimpleXMLRPCServer
@@ -31,89 +33,33 @@ class StoppableServer(_baseclass):
 
     allow_reuse_address = True
 
-    def __init__(self, addr, zpar_ref, zpar_model_path, model_list, *args, **kwds):
+    def __init__(self, addr, zpar_model_path, model_list, *args, **kwds):
+
+        super(StoppableServer, self).__init__(addr)
 
         # store the hostname and port number
         self.myhost, self.myport = addr
 
         # store the link to the loaded zpar object
-        self.zpar_ref = zpar_ref
-
-        # define the argument and return types for all
-        # the functions we want to expose to the client
-        self.zpar_ref.load_models.restype = c.c_int
-        self.zpar_ref.load_models.argtypes = [c.c_char_p]
-
-        self.zpar_ref.load_tagger.restype = c.c_int
-        self.zpar_ref.load_tagger.argtypes = [c.c_char_p]
-
-        self.zpar_ref.load_parser.restype = c.c_int
-        self.zpar_ref.load_parser.argtypes = [c.c_char_p]
-
-        self.zpar_ref.load_depparser.restype = c.c_int
-        self.zpar_ref.load_depparser.argtypes = [c.c_char_p]
-
-        self.zpar_ref.tag_sentence.restype = c.c_char_p
-        self.zpar_ref.tag_sentence.argtypes = [c.c_char_p]
-
-        self.zpar_ref.parse_sentence.restype = c.c_char_p
-        self.zpar_ref.parse_sentence.argtypes = [c.c_char_p]
-
-        self.zpar_ref.dep_parse_sentence.restype = c.c_char_p
-        self.zpar_ref.dep_parse_sentence.argtypes = [c.c_char_p]
-
-        self.zpar_ref.tag_file.restype = None
-        self.zpar_ref.tag_file.argtypes = [c.c_char_p, c.c_char_p]
-
-        self.zpar_ref.parse_file.restype = None
-        self.zpar_ref.parse_file.argtypes = [c.c_char_p, c.c_char_p]
-
-        self.zpar_ref.dep_parse_file.restype = None
-        self.zpar_ref.dep_parse_file.argtypes = [c.c_char_p, c.c_char_p]
-
-        self.zpar_ref.unload_models.restype = None
+        self.z = ZPar(zpar_model_path)
 
         # initialize the parent class
         _baseclass.__init__(self, addr, *args, **kwds)
 
-        # load the models we were asked to. If the list of
-        # given models is empty or if it contains all the models
-        # then call the function that loads all the models and
-        # registers all the functions
-        if not model_list or sorted(model_list) == ['depparser',
-                                                    'parser',
-                                                    'tagger']:
-            if self.zpar_ref.load_models(zpar_model_path):
-                raise ModelNotFoundError("all", zpar_model_path.decode('utf-8'))
-            else:
-                self.register_function(self.tag_sentence)
-                self.register_function(self.parse_sentence)
-                self.register_function(self.dep_parse_sentence)
-                self.register_function(self.tag_file)
-                self.register_function(self.parse_file)
-                self.register_function(self.dep_parse_file)
-
-        # otherwise call the individual loading functions
+        # Call the individual loading functions
         # and only register the appropriate methods
-        else:
-            if 'tagger' in model_list:
-                if self.zpar_ref.load_tagger(zpar_model_path):
-                    raise ModelNotFoundError("tagger", zpar_model_path.decode('utf-8'))
-                else:
-                    self.register_function(self.tag_sentence)
-                    self.register_function(self.tag_file)
-            if 'parser' in model_list:
-                if self.zpar_ref.load_parser(zpar_model_path):
-                    raise ModelNotFoundError("parser", zpar_model_path.decode('utf-8'))
-                else:
-                    self.register_function(self.parse_sentence)
-                    self.register_function(self.parse_file)
-            if 'depparser' in model_list:
-                if self.zpar_ref.load_depparser(zpar_model_path):
-                    raise ModelNotFoundError("depparser", zpar_model_path.decode('utf-8'))
-                else:
-                    self.register_function(self.dep_parse_sentence)
-                    self.register_function(self.dep_parse_file)
+        if 'tagger' in model_list:
+            tagger = self.z.get_tagger()
+            self.register_function(tagger.tag_sentence)
+            self.register_function(tagger.tag_file)
+        if 'parser' in model_list:
+            parser = self.z.get_parser()
+            self.register_function(parser.parse_sentence)
+            self.register_function(parser.parse_file)
+        if 'depparser' in model_list:
+            parser = self.z.get_depparser()
+            self.register_function(parser.parse_sentence)
+            self.register_function(parser.parse_file)
 
         # register the function to remotely stop the server
         self.register_function(self.stop_server)
@@ -127,38 +73,8 @@ class StoppableServer(_baseclass):
             except KeyboardInterrupt:
                 print("\nKeyboard interrupt received, exiting.")
                 break
-        self.zpar_ref.unload_models()
+        self.z.close()
         self.server_close()
-
-    def tag_sentence(self, sentence):
-        # We need to add a newline to the sentence
-        # given how zpar's tokenization works
-        out = self.zpar_ref.tag_sentence(sentence.encode('utf-8') + b'\n ')
-        return out.decode('utf-8')
-
-    def parse_sentence(self, sentence):
-        # We need to add a newline to the sentence
-        # given how zpar's tokenization works
-        out = self.zpar_ref.parse_sentence(sentence.encode('utf-8') + b'\n ')
-        return out.decode('utf-8')
-
-    def dep_parse_sentence(self, sentence):
-        # We need to add a newline to the sentence
-        # given how zpar's tokenization works
-        out = self.zpar_ref.dep_parse_sentence(sentence.encode('utf-8') + b'\n ')
-        return out.decode('utf-8')
-
-    def tag_file(self, input_filename, output_filename):
-        self.zpar_ref.tag_file(input_filename.encode('utf-8'),
-                               output_filename.encode('utf-8'))
-
-    def parse_file(self, input_filename, output_filename):
-        self.zpar_ref.parse_file(input_filename.encode('utf-8'),
-                                 output_filename.encode('utf-8'))
-
-    def dep_parse_file(self, input_filename, output_filename):
-        self.zpar_ref.dep_parse_file(input_filename.encode('utf-8'),
-                                     output_filename.encode('utf-8'))
 
     def stop_server(self):
         self.quit = True
@@ -169,17 +85,13 @@ if __name__ == '__main__':
 
     # set up an argument parser
     parser = argparse.ArgumentParser(prog='zpar_server.py')
-    parser.add_argument('--zpar', dest='zpar',
-                        help="Path to the zpar library file zpar.so",
-                        required=False, default=os.getcwd())
-
     parser.add_argument('--modeldir', dest='modeldir',
                         help="Path to directory containing zpar English models",
                         required=True)
 
     parser.add_argument('--models', dest='models', nargs='+',
                         help="Load only these models",
-                        default=None)
+                        required=True)
 
     parser.add_argument('--host', dest='hostname',
                         help="Hostname or IP address",
@@ -201,36 +113,19 @@ if __name__ == '__main__':
 
     # check to make sure that the specified models
     # are those we know about
-    if args.models:
-        if set(args.models).difference(['tagger', 'parser', 'depparser']):
-            sys.stderr.write('Error: invalid model(s) specified. Choices are: "tagger", "parser", and "depparser".\n')
-            sys.exit(1)
+    if set(args.models).difference(['tagger', 'parser', 'depparser']):
+        sys.stderr.write('Error: invalid model(s) specified. Choices are: "tagger", "parser", and "depparser".\n')
+        sys.exit(1)
 
     # set up the logging
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-    # link to the zpar library
-    zpar_library_path = os.path.join(args.zpar, 'zpar.so')
-
-    # Create a wrapper data structure that the functionality as methods
-    zparobj = c.cdll.LoadLibrary(zpar_library_path)
-
     # Create a server that is built on top of this ZPAR data structure
     logging.info('Initializing server ...')
-    try:
-        server = StoppableServer((args.hostname, args.port),
-                                 zparobj, args.modeldir.encode('utf-8'),
-                                 args.models, logRequests=args.log,
-                                 allow_none=True)
-    except ModelNotFoundError as err:
-        sys.stderr.write("{}\n".format(err))
-        zparobj.unload_models()
-        sys.exit(1)
-    except:
-        sys.stderr.write('Error: Could not create server\n')
-        zparobj.unload_models()
-        sys.exit(1)
-
+    server = StoppableServer((args.hostname, args.port),
+                             args.modeldir, args.models,
+                             logRequests=args.log,
+                             allow_none=True)
 
     # Register introspection functions with the server
     logging.info('Registering introspection ...')
