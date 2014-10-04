@@ -14,6 +14,10 @@ BASEPATH = os.path.dirname(os.path.abspath(__file__))
 ZPAR_PATH = os.path.join(BASEPATH, 'zpar')
 ZPAR_LIB_PATH = os.path.join(ZPAR_PATH, 'dist')
 
+def readme():
+    with open('README') as f:
+        return f.read()
+
 class build_zpar(build):
     def run(self):
 
@@ -71,7 +75,7 @@ setup(
     maintainer_email='nmadnani@ets.org',
     license='MIT',
     url='http://www.github.com/EducationalTestingService/python-zpar',
-    long_description=read('README.md'),
+    long_description=readme(),
     classifiers=['Intended Audience :: Science/Research',
                  'Intended Audience :: Developers',
                  'License :: OSI Approved :: MIT License',
