@@ -51,6 +51,8 @@ class ZPar(object):
 
         # clean up the CDLL object too so that upon reuse, we get a new one
         _ctypes.dlclose(self.libptr._handle)
+        # pretty sure once the old object libptr was pointed to should
+        # get garbage collected at some point after this
         self.libptr = None
 
     def __enter__(self):
