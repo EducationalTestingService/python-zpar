@@ -51,6 +51,7 @@ class ZPar(object):
 
         # clean up the CDLL object too so that upon reuse, we get a new one
         _ctypes.dlclose(self.libptr._handle)
+        self.libptr = None
 
     def __enter__(self):
         """Enable ZPar to be used as a ContextManager"""
@@ -61,14 +62,26 @@ class ZPar(object):
         self.close()
 
     def get_tagger(self):
-        self.tagger = Tagger(self.modelpath, self.libptr)
-        return self.tagger
+        if not self.libptr:
+            raise Exception('Cannot get tagger from uninitialized ZPar environment.')
+            return None
+        else:
+            self.tagger = Tagger(self.modelpath, self.libptr)
+            return self.tagger
 
     def get_parser(self):
-        self.parser = Parser(self.modelpath, self.libptr)
-        return self.parser
+        if not self.libptr:
+            raise Exception('Cannot get parser from uninitialized ZPar environment.')
+            return None
+        else:
+            self.parser = Parser(self.modelpath, self.libptr)
+            return self.parser
 
     def get_depparser(self):
-        self.depparser = DepParser(self.modelpath, self.libptr)
-        return self.depparser
+        if not self.libptr:
+            raise Exception('Cannot get parser from uninitialized ZPar environment.')
+            return None
+        else:
+            self.depparser = DepParser(self.modelpath, self.libptr)
+            return self.depparser
 
