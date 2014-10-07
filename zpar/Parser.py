@@ -5,6 +5,7 @@
 '''
 
 import ctypes as c
+import os
 
 class Parser(object):
     """The ZPar English Constituency Parser"""
@@ -36,7 +37,10 @@ class Parser(object):
         return parsed_sent.decode('utf-8')
 
     def parse_file(self, inputfile, outputfile):
-        self._parse_file(inputfile.encode('utf-8'), outputfile.encode('utf-8'))
+        if os.path.exists(inputfile):
+            self._parse_file(inputfile.encode('utf-8'), outputfile.encode('utf-8'))
+        else:
+            raise OSError('File {} does not exist.'.format(inputfile))
 
     def cleanup(self):
         self._load_parser = None

@@ -3,8 +3,8 @@
 :author: Nitin Madnani (nmadnani@ets.org)
 :organization: ETS
 '''
-
 import ctypes as c
+import os
 
 class Tagger(object):
     """The ZPar English POS Tagger"""
@@ -36,7 +36,10 @@ class Tagger(object):
         return tagged_sent.decode('utf-8')
 
     def tag_file(self, inputfile, outputfile):
-        self._tag_file(inputfile.encode('utf-8'), outputfile.encode('utf-8'))
+        if os.path.exists(inputfile):
+            self._tag_file(inputfile.encode('utf-8'), outputfile.encode('utf-8'))
+        else:
+            raise OSError('File {} does not exist.'.format(inputfile))
 
     def cleanup(self):
         self._load_tagger = None
