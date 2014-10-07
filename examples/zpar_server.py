@@ -35,8 +35,6 @@ class StoppableServer(_baseclass):
 
     def __init__(self, addr, zpar_model_path, model_list, *args, **kwds):
 
-        super(StoppableServer, self).__init__(addr)
-
         # store the hostname and port number
         self.myhost, self.myport = addr
 
