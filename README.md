@@ -7,6 +7,8 @@ I wrote python-zpar since I needed a fast and efficient parser for my NLP work w
 python-zpar uses [ctypes](https://docs.python.org/3.3/library/ctypes.html), a very cool foreign function library bundled with Python that allows calling functions in C DLLs or shared libraries directly.
 
 ### Installation
+Currently, python-zpar only works on 64-bit linux and OS X systems. Those are the two platforms I use everyday. I am happy to try to get python-zpar working on other platforms over time. Pull requests are welcome!
+
 In order for python-zpar to work, it requires C functions that can be called directly. Since the only user-exposed entry point in ZPar is the command line client, I needed to write a shared library that would have functions built on top of the ZPar functionality but expose them in a way that ctypes could understand.
 
 Therefore, in order to build python-zpar from scratch, we need to download the ZPar source, patch it with new functionality and compile the shared library. All of this happens automatically when you install with pip:
@@ -15,7 +17,13 @@ Therefore, in order to build python-zpar from scratch, we need to download the Z
 pip install python-zpar
 ```
 
-**IMPORTANT**: On OS X, this will only work with `gcc` installed using either [macports](http://www.macports.org) or [homebrew](http://brew.sh/). The zpar source cannot be compiled with `clang`.
+If you are using `conda`, things are even faster since everything is pre-compiled:
+
+```bash
+conda install -c https://conda.binstar.org/desilinguist python-zpar
+```
+
+**IMPORTANT**: On OS X, the installation will only work with `gcc` installed using either [macports](http://www.macports.org) or [homebrew](http://brew.sh/). The zpar source cannot be compiled with `clang`.
 
 If you are curious about what the C functions in the shared library module look like, see `src/zpar.lib.cpp`.
 
