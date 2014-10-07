@@ -1,0 +1,21 @@
+package:
+    name: python-zpar
+    version: "0.2.0"
+
+build:
+    number: {{environ.get('BINSTAR_BUILD', 1)}}
+    script:
+      - cd $RECIPE_DIR
+      - $PYTHON setup.py install
+
+requirements:
+    build:
+      - python
+      - setuptools
+    run:
+      - python
+      - six
+
+about:
+    home: https://github.com/EducationalTestingService/python-zpar
+    license: MIT
