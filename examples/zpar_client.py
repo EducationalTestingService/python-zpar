@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import os
 import six
 import socket
 import sys
@@ -51,7 +52,7 @@ if __name__ == '__main__':
     try:
 
         test_sentence = 'I am going to the market.'
-        test_file = 'test.txt'
+        test_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test.txt')
         tag_outfile = 'test.tag'
         dep_outfile = 'test.dep'
 
