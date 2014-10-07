@@ -116,3 +116,4 @@ Although python-zpar is licensed under the MIT license - which means that you ca
 
 1. Improve error handling on both the python and C side.
 2. Expose more functionality, e.g., Chinese word segmentation, parsing etc.
+3. May be look into using [CFFI](https://cffi.readthedocs.org/) instead of ctypes.
