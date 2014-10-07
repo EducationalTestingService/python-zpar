@@ -142,6 +142,14 @@ extern "C" int load_parser(const char *sFeaturePath) {
 // The function to load the dependency parser model
 extern "C" int load_depparser(const char *sFeaturePath) {
 
+    // If the tagger is not already loaded, then we need to load
+    // it since the parser requires the tagger
+    if (!zpm->tagger) {
+        if (load_tagger(sFeaturePath)) {
+            return 1;
+        }
+    }
+
     CDepParser *depparser;
     std::string sDepParserFeatureFile = std::string(sFeaturePath) + "/depparser";
     std::cerr << "Loading dependency parser from " << sDepParserFeatureFile << std::endl;

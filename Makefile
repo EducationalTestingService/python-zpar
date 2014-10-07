@@ -11,8 +11,8 @@ python-zpar: clean /tmp/zpar.zip
 	cp src/Makefile /tmp/zpar
 	cp src/reader.h /tmp/zpar/src/include/reader.h
 	make -C /tmp/zpar zpar.so
-	mkdir -p dist
-	cp /tmp/zpar/dist/zpar.so dist/
+	mkdir -p zpar/dist
+	cp /tmp/zpar/dist/zpar.so zpar/dist/
 
 /tmp/zpar.zip:
 	wget -N http://sourceforge.net/projects/zpar/files/latest/zpar.zip -O /tmp/zpar.zip
