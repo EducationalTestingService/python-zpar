@@ -15,7 +15,7 @@ ZPAR_PATH = os.path.join(BASEPATH, 'zpar')
 ZPAR_LIB_PATH = os.path.join(ZPAR_PATH, 'dist')
 
 def readme():
-    with open('README') as f:
+    with open('README.rst') as f:
         return f.read()
 
 class build_zpar(build):
@@ -68,7 +68,7 @@ def read(fname):
 
 
 setup(
-    name='zpar',
+    name='python-zpar',
     version='0.2',
     description='A Wrapper around the ZPar statistical tagger/parser for English',
     maintainer='Nitin Madnani',
