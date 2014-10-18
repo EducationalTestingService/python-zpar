@@ -58,7 +58,20 @@ pre-compiled:
 **IMPORTANT**: On OS X, the installation will only work with ``gcc``
 installed using either `macports <http://www.macports.org>`__ or
 `homebrew <http://brew.sh/>`__. The zpar source cannot be compiled with
-``clang``.
+``clang``. If you are having trouble compiling the code after cloning
+the repository or installing the package using pip, you can try
+to explicitly override the C++ compiler:
+
+.. code-block:: bash
+
+    CXX=<path to c++ compiler> make -e
+
+or
+
+.. code-block:: bash
+
+    CXX=<path to c++ compiler> pip install python-zpar
+
 
 If you are curious about what the C functions in the shared library
 module look like, see ``src/zpar.lib.cpp``.
