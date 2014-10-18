@@ -24,15 +24,28 @@ class build_zpar(build):
         # run original build code
         build.run(self)
 
+        # get a copy of the user environment
+        env = os.environ.copy()
+
         sys.stderr.write('running build_zpar\n')
 
         # for now the compilation is just calling make
-        cmd = ['make']
+        # with the option to override the CXX defined
+        # in the zpar Makefile with the CXX environment
+        # variable if defined.
+        if os.environ.get('CXX'):
+            cmd = ['make', '-e']
+            env['CXX'] = os.environ.get('CXX')
+        else:
+            cmd = ['make']
 
         # compile the shared library path
         def compile():
             sys.stderr.write('*' * 80 + '\n')
-            call(cmd)
+            ret = call(cmd, env=env)
+            # if something went wrong, raise an error
+            if ret:
+                raise RuntimeError('ZPar shared library compilation failed')
             sys.stderr.write('*' * 80 + '\n')
         self.execute(compile, [], 'compiling zpar library')
 
@@ -69,7 +82,7 @@ def read(fname):
 
 setup(
     name='python-zpar',
-    version='0.3',
+    version='0.4',
     description='A Wrapper around the ZPar statistical tagger/parser for English',
     maintainer='Nitin Madnani',
     maintainer_email='nmadnani@ets.org',
