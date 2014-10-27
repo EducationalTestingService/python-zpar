@@ -116,7 +116,7 @@ Here's a small example of how to use python-zpar:
 
 The above code sample produces the following output:
 
-.. code-block:: bash
+.. code-block::
 
     I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.
 
