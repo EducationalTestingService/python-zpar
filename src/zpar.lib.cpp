@@ -176,7 +176,7 @@ extern "C" int load_models(const char *sFeaturePath) {
 }
 
 // Function to tag a sentence
-extern "C" char* tag_sentence(const char *input_sentence)
+extern "C" char* tag_sentence(const char *input_sentence, bool tokenize)
 {
 
     // create a temporary string stream from the input char *
@@ -184,7 +184,12 @@ extern "C" char* tag_sentence(const char *input_sentence)
 
     // tokenize the sentence
     CStringVector input_sent[1];
-    input_reader.readSegmentedSentenceAndTokenize(input_sent);
+    if (tokenize) {
+        input_reader.readSegmentedSentenceAndTokenize(input_sent);
+    }
+    else {
+        input_reader.readSegmentedSentence(input_sent);
+    }
 
     // initialize the variable that will hold the tagged sentence
     CTwoStringVector tagged_sent[1];
@@ -209,7 +214,7 @@ extern "C" char* tag_sentence(const char *input_sentence)
 }
 
 // Function to constituency parse a sentence
-extern "C" char* parse_sentence(const char *input_sentence)
+extern "C" char* parse_sentence(const char *input_sentence, bool tokenize)
 {
 
     // create a temporary string stream from the input char *
@@ -217,7 +222,12 @@ extern "C" char* parse_sentence(const char *input_sentence)
 
     // tokenize the sentence
     CStringVector tokenized_sent[1];
-    input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+    if (tokenize) {
+        input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+    }
+    else {
+        input_reader.readSegmentedSentence(tokenized_sent);
+    }
 
     if (zpm->output_buffer != NULL) {
         delete zpm->output_buffer;
@@ -253,7 +263,7 @@ extern "C" char* parse_sentence(const char *input_sentence)
 }
 
 // Function to dependency parse a sentence
-extern "C" char* dep_parse_sentence(const char *input_sentence)
+extern "C" char* dep_parse_sentence(const char *input_sentence, bool tokenize)
 {
 
     // create a temporary string stream from the input char *
@@ -261,7 +271,12 @@ extern "C" char* dep_parse_sentence(const char *input_sentence)
 
     // tokenize the sentence
     CStringVector tokenized_sent[1];
-    input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+    if (tokenize) {
+        input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+    }
+    else {
+        input_reader.readSegmentedSentence(tokenized_sent);
+    }
 
     // initialize the variable that will hold the tagged sentence
     CTwoStringVector tagged_sent[1];
@@ -298,7 +313,7 @@ extern "C" char* dep_parse_sentence(const char *input_sentence)
 
 // Function to tag all sentence in the given input file
 // and write tagged sentences to the given output file
-extern "C" void tag_file(const char *sInputFile, const char *sOutputFile)
+extern "C" void tag_file(const char *sInputFile, const char *sOutputFile, bool tokenize)
 {
 
     std::cerr << "Processing file " <<  sInputFile << std::endl;
@@ -317,8 +332,15 @@ extern "C" void tag_file(const char *sInputFile, const char *sOutputFile)
     // get the tagger and the parser that were stored earlier
     CTagger *tagger = (CTagger *)zpm->tagger;
 
-    // read in and tokenize the given input file
-    while ( input_reader.readSegmentedSentenceAndTokenize(tokenized_sent) )
+    // read in and tokenize the given input file if asked
+    bool readSomething;
+    if (tokenize) {
+        readSomething = input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+    }
+    else {
+        readSomething = input_reader.readSegmentedSentence(tokenized_sent);
+    }
+    while ( readSomething )
     {
         if ( tokenized_sent->back() == "\n" )
         {
@@ -331,6 +353,13 @@ extern "C" void tag_file(const char *sInputFile, const char *sOutputFile)
         // write the formatted sentence to the output file
         std::string tagvec = format_tagged_vector(tagged_sent);
         fprintf(outfp, "%s\n", tagvec.c_str());
+
+        if (tokenize) {
+            readSomething = input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+        }
+        else {
+            readSomething = input_reader.readSegmentedSentence(tokenized_sent);
+        }
     }
 
     // close the output file
@@ -340,7 +369,7 @@ extern "C" void tag_file(const char *sInputFile, const char *sOutputFile)
 
 // Function to constituency parse all sentence in the given input file
 // and write parsed sentences to the given output file
-extern "C" void parse_file(const char *sInputFile, const char *sOutputFile)
+extern "C" void parse_file(const char *sInputFile, const char *sOutputFile, bool tokenize)
 {
 
     std::cerr << "Processing file " <<  sInputFile << std::endl;
@@ -361,8 +390,16 @@ extern "C" void parse_file(const char *sInputFile, const char *sOutputFile)
     CTagger *tagger = (CTagger *)zpm->tagger;
     CConParser *conparser = (CConParser *)zpm->conparser;
 
-    // read in and tokenize the given input file
-    while ( input_reader.readSegmentedSentenceAndTokenize(tokenized_sent) )
+    // read in and tokenize the given input file if asked
+    bool readSomething;
+    if (tokenize) {
+        readSomething = input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+    }
+    else {
+        readSomething = input_reader.readSegmentedSentence(tokenized_sent);
+    }
+
+    while ( readSomething )
     {
         if ( tokenized_sent->back() == "\n" )
         {
@@ -379,6 +416,13 @@ extern "C" void parse_file(const char *sInputFile, const char *sOutputFile)
         }
 
         fprintf(outfp, "%s\n", parse.c_str());
+
+        if (tokenize) {
+            readSomething = input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+        }
+        else {
+            readSomething = input_reader.readSegmentedSentence(tokenized_sent);
+        }
     }
 
     // close the output file
@@ -388,7 +432,7 @@ extern "C" void parse_file(const char *sInputFile, const char *sOutputFile)
 
 // Function to dependency parse all sentence in the given input file
 // and write parsed sentences to the given output file
-extern "C" void dep_parse_file(const char *sInputFile, const char *sOutputFile)
+extern "C" void dep_parse_file(const char *sInputFile, const char *sOutputFile, bool tokenize)
 {
 
     std::cerr << "Processing file " <<  sInputFile << std::endl;
@@ -409,8 +453,16 @@ extern "C" void dep_parse_file(const char *sInputFile, const char *sOutputFile)
     CTagger *tagger = (CTagger *)zpm->tagger;
     CDepParser *depparser = (CDepParser *)zpm->depparser;
 
-    // read in and tokenize the given input file
-    while ( input_reader.readSegmentedSentenceAndTokenize(tokenized_sent) )
+    // read in and tokenize the given input file if asked
+    bool readSomething;
+    if (tokenize) {
+        readSomething = input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+    }
+    else {
+        readSomething = input_reader.readSegmentedSentence(tokenized_sent);
+    }
+
+    while ( readSomething )
     {
         if ( tokenized_sent->back() == "\n" )
         {
@@ -427,6 +479,13 @@ extern "C" void dep_parse_file(const char *sInputFile, const char *sOutputFile)
         }
 
         fprintf(outfp, "%s\n", deptree.c_str());
+
+        if (tokenize) {
+            readSomething = input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
+        }
+        else {
+            readSomething = input_reader.readSegmentedSentence(tokenized_sent);
+        }
     }
 
     // close the output file
@@ -443,13 +502,22 @@ extern "C" void unload_models()
     delete zpm;
 }
 
-// A main function for testing
+// // A main function for testing
 // extern "C" int main(int argc, char *argv[])
 // {
-//     load_tagger("/scratch/nmadnani/zpar/english");
-//     load_depparser("/scratch/nmadnani/zpar/english");
-//     std::cout << std::string(dep_parse_sentence("I am going to the market.\n")) << std::endl;
-//     dep_parse_file("/scratch/nmadnani/zpar/test.txt", "/scratch/nmadnani/zpar/test.dep");
+//     load_models("/scratch/nmadnani/zpar-new/english-models");
+//     std::cout << std::string(tag_sentence("I said `` I am going to the market . \"", false)) << std::endl;
+//     std::cout << std::string(parse_sentence("I said `` I am going to the market . \"", false)) << std::endl;
+//     std::cout << std::string(dep_parse_sentence("I said `` I am going to the market . \"", false)) << std::endl;
+//     std::cout << std::string(tag_sentence("I said \"I am going to the market .\"", true)) << std::endl;
+//     std::cout << std::string(parse_sentence("I said \"I am going to the market .\"", true)) << std::endl;
+//     std::cout << std::string(dep_parse_sentence("I said \"I am going to the market .\"", true)) << std::endl;
+//     tag_file("/scratch/nmadnani/zpar-new/test.txt", "/scratch/nmadnani/zpar-new/test.tag", false);
+//     parse_file("/scratch/nmadnani/zpar-new/test.txt", "/scratch/nmadnani/zpar-new/test.parse", false);
+//     dep_parse_file("/scratch/nmadnani/zpar-new/test.txt", "/scratch/nmadnani/zpar-new/test.dep", false);
+//     tag_file("/scratch/nmadnani/zpar-new/test2.txt", "/scratch/nmadnani/zpar-new/test2.tag", true);
+//     parse_file("/scratch/nmadnani/zpar-new/test2.txt", "/scratch/nmadnani/zpar-new/test2.parse", true);
+//     dep_parse_file("/scratch/nmadnani/zpar-new/test2.txt", "/scratch/nmadnani/zpar-new/test2.dep", true);
 //     unload_models();
 
 //     return 0;
