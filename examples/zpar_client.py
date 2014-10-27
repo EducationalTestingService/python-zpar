@@ -51,24 +51,34 @@ if __name__ == '__main__':
     # Make the remote procedure calls on the server
     try:
 
-        test_sentence = 'I am going to the market.'
+        test_sentence = "Don't you want to come with me to the market?"
         test_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test.txt')
+        tokenized_test_sentence = "Do n't you want to come to the market with me ?"
+        tokenized_test_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_tokenized.txt')
         tag_outfile = 'test.tag'
-        dep_outfile = 'test.dep'
+        parse_outfile = 'test.parse'
 
         logging.info('Tagging "{}"'.format(test_sentence))
         tagged_sent = proxy.tag_sentence(test_sentence)
         logging.info("Output: {}".format(tagged_sent))
 
-        logging.info('Dep Parsing "{}"'.format(test_sentence))
-        dep_parsed_sent = proxy.parse_sentence(test_sentence)
-        logging.info("Output: {}".format(dep_parsed_sent))
+        logging.info('Tagging "{}"'.format(tokenized_test_sentence))
+        tagged_sent = proxy.tag_sentence(tokenized_test_sentence, False)
+        logging.info("Output: {}".format(tagged_sent))
+
+        logging.info('Parsing "{}"'.format(test_sentence))
+        parsed_sent = proxy.parse_sentence(test_sentence)
+        logging.info("Output: {}".format(parsed_sent))
+
+        logging.info('Dep Parsing "{}"'.format(tokenized_test_sentence))
+        parsed_sent = proxy.dep_parse_sentence(tokenized_test_sentence, False)
+        logging.info("Output: {}".format(parsed_sent))
 
         logging.info('Tagging file {} into {}'.format(test_file, tag_outfile))
         proxy.tag_file(test_file, tag_outfile)
 
-        logging.info('Dep Parsing file {} into {}'.format(test_file, dep_outfile))
-        proxy.parse_file(test_file, dep_outfile)
+        logging.info('Parsing file {} into {}'.format(tokenized_test_file, parse_outfile))
+        proxy.parse_file(tokenized_test_file, parse_outfile, False)
 
     except socket.error as err:
         sys.stderr.write("{}\n".format(err))

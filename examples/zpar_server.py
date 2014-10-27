@@ -56,8 +56,8 @@ class StoppableServer(_baseclass):
             self.register_function(parser.parse_file)
         if 'depparser' in model_list:
             parser = self.z.get_depparser()
-            self.register_function(parser.parse_sentence)
-            self.register_function(parser.parse_file)
+            self.register_function(parser.dep_parse_sentence)
+            self.register_function(parser.dep_parse_file)
 
         # register the function to remotely stop the server
         self.register_function(self.stop_server)
