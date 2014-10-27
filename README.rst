@@ -103,8 +103,15 @@ Here's a small example of how to use python-zpar:
         tagged_sent = tagger.tag_sentence("I am going to the market.")
         print_(tagged_sent)
 
-        # get the dependency parse of the same sentence
-        dep_parsed_sent = depparser.parse_sentence("I am going to the market.")
+        # tag an already tokenized sentence
+        tagged_sent = tagger.tag_sentence("Do n't you want to come with me to the market ?", tokenize=False)
+        print_(tagged_sent)
+
+        # get the dependency parses of the same two sentences
+        dep_parsed_sent = depparser.dep_parse_sentence("I am going to the market.")
+        print_(dep_parsed_sent)
+
+        dep_parsed_sent = depparser.dep_parse_sentence("Do n't you want to come with me to the market ?", tokenize=False)
         print_(dep_parsed_sent)
 
 The above code sample produces the following output:
@@ -113,6 +120,8 @@ The above code sample produces the following output:
 
     I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.
 
+    Do/VBP n't/RB you/PRP want/VBP to/TO come/VB with/IN me/PRP to/TO the/DT market/NN ?/.
+
     I       PRP   1    SUB
     am      VBP   -1   ROOT
     going   VBG   1    VC
@@ -120,6 +129,20 @@ The above code sample produces the following output:
     the     DT    5    NMOD
     market  NN    3    PMOD
     .       .     1    P
+
+    Do      VBP  -1  ROOT
+    n't     RB   0   VMOD
+    you     PRP  0   SUB
+    want    VBP  0   VMOD
+    to      TO   5   VMOD
+    come    VB   3   VMOD
+    with    IN   5   VMOD
+    me      PRP  6   PMOD
+    to      TO   5   VMOD
+    the     DT   10  NMOD
+    market  NN   8   PMOD
+    ?       .    0   P
+
 
 Detailed usage with comments is shown in the included file
 ``examples/zpar_example.py``. Run ``python zpar_example.py -h`` to see a
@@ -140,10 +163,12 @@ models loaded:
 .. code-block:: bash
 
     $> cd examples
-    $> python zpar_server.py --modeldir english-models --models tagger depparser
+    $> python zpar_server.py --modeldir english-models --models tagger parser depparser
     INFO:Initializing server ...
     Loading tagger from english-models/tagger
     Loading model... done.
+    Loading constituency parser from english-models/conparser
+    Loading scores... done. (65.9334s)
     Loading dependency parser from english-models/depparser
     Loading scores... done. (14.9623s)
     INFO:Registering introspection ...
@@ -159,20 +184,31 @@ can be run as follows:
 
     $> cd examples
     $> python zpar_client.py
-    INFO:Attempting connection to http://localhost:8859
-    INFO:Tagging "I am going to the market."
-    INFO:Output: I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.
-    INFO:Dep Parsing "I am going to the market."
-    INFO:Output: I  PRP 1   SUB
-    am  VBP -1  ROOT
-    going   VBG 1   VC
-    to  TO  2   VMOD
-    the DT  5   NMOD
-    market  NN  3   PMOD
-    .   .   1   P
 
-    INFO:Tagging file test.txt into test.tag
-    INFO:Dep Parsing file test.txt into
+    INFO:Attempting connection to http://localhost:8859
+    INFO:Tagging "Don't you want to come with me to the market?"
+    INFO:Output: Do/VBP n't/RB you/PRP want/VBP to/TO come/VB with/IN me/PRP to/TO the/DT market/NN ?/.
+    INFO:Tagging "Do n't you want to come to the market with me ?"
+    INFO:Output: Do/VBP n't/RB you/PRP want/VBP to/TO come/VB to/TO the/DT market/NN with/IN me/PRP ?/.
+    INFO:Parsing "Don't you want to come with me to the market?"
+    INFO:Output: (SQ (VBP Do) (RB n't) (NP (PRP you)) (VP (VBP want) (S (VP (TO to) (VP (VB come) (PP (IN with) (NP (PRP me))) (PP (TO to) (NP (DT the) (NN market))))))) (. ?))
+    INFO:Dep Parsing "Do n't you want to come to the market with me ?"
+    INFO:Output: Do VBP -1  ROOT
+    n't RB  0   VMOD
+    you PRP 0   SUB
+    want    VBP 0   VMOD
+    to  TO  5   VMOD
+    come    VB  3   VMOD
+    to  TO  5   VMOD
+    the DT  8   NMOD
+    market  NN  6   PMOD
+    with    IN  5   VMOD
+    me  PRP 9   PMOD
+    ?   .   0   P
+
+    INFO:Tagging file /Users/nmadnani/work/python-zpar/examples/test.txt into test.tag
+    INFO:Parsing file /Users/nmadnani/work/python-zpar/examples/test_tokenized.txt into test.parse
+
 
 Note that python-zpar and all of the example scripts should work with
 both Python 2.7 and Python 3.3. I have tested python-zpar on both Linux
