@@ -21,24 +21,24 @@ class DepParser(object):
         # get the library methods that parse sentences and files
         self._dep_parse_sentence = libptr.dep_parse_sentence
         self._dep_parse_sentence.restype = c.c_char_p
-        self._dep_parse_sentence.argtypes = [c.c_char_p]
+        self._dep_parse_sentence.argtypes = [c.c_char_p, c.c_bool]
 
         self._parse_file = libptr.dep_parse_file
         self._parse_file.restype = None
-        self._parse_file.argtypes = [c.c_char_p, c.c_char_p]
+        self._parse_file.argtypes = [c.c_char_p, c.c_char_p, c.c_bool]
 
         if self._load_depparser(modelpath.encode('utf-8')):
             raise OSError('Cannot find dependency parser model at {}\n'.format(modelpath))
 
-    def parse_sentence(self, sentence):
+    def dep_parse_sentence(self, sentence, tokenize=True):
         zpar_compatible_sentence = sentence.strip() + "\n "
         zpar_compatible_sentence = zpar_compatible_sentence.encode('utf-8')
-        parsed_sent = self._dep_parse_sentence(zpar_compatible_sentence)
+        parsed_sent = self._dep_parse_sentence(zpar_compatible_sentence, tokenize)
         return parsed_sent.decode('utf-8')
 
-    def parse_file(self, inputfile, outputfile):
+    def dep_parse_file(self, inputfile, outputfile, tokenize=True):
         if os.path.exists(inputfile):
-            self._parse_file(inputfile.encode('utf-8'), outputfile.encode('utf-8'))
+            self._parse_file(inputfile.encode('utf-8'), outputfile.encode('utf-8'), tokenize)
         else:
             raise OSError('File {} does not exist.'.format(inputfile))
 
