@@ -160,7 +160,7 @@ allows loading only the models that you need. Here's an example of how
 to start the server with only the tagger and the dependency parser
 models loaded:
 
-.. code-block:: bash
+.. code-block::
 
     $> cd examples
     $> python zpar_server.py --modeldir english-models --models tagger parser depparser
@@ -180,7 +180,7 @@ Once the server is running, you can connect to it using a client. An
 example client is included in the file ``examples/zpar_client.py`` which
 can be run as follows:
 
-.. code-block:: bash
+.. code-block::
 
     $> cd examples
     $> python zpar_client.py
