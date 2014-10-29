@@ -55,8 +55,8 @@ if __name__ == '__main__':
         test_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test.txt')
         tokenized_test_sentence = "Do n't you want to come to the market with me ?"
         tokenized_test_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_tokenized.txt')
-        tag_outfile = 'test.tag'
-        parse_outfile = 'test.parse'
+        tag_outfile = os.path.join(os.getcwd(), 'test.tag')
+        parse_outfile = os.path.join(os.getcwd(), 'test.parse')
 
         logging.info('Tagging "{}"'.format(test_sentence))
         tagged_sent = proxy.tag_sentence(test_sentence)
