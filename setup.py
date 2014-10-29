@@ -106,5 +106,7 @@ setup(
     cmdclass={
         'build': build_zpar,
         'install': install_zpar,
-    }
+    },
+    entry_points={'console_scripts':
+                  ['zpar_server = zpar.zpar_server:main']}
 )

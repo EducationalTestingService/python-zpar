@@ -79,10 +79,10 @@ class StoppableServer(_baseclass):
         return 0, "Server terminated on host %r, port %r" % (self.myhost, self.myport)
 
 
-if __name__ == '__main__':
-
+def main():
     # set up an argument parser
-    parser = argparse.ArgumentParser(prog='zpar_server.py')
+    parser = argparse.ArgumentParser(prog='zpar_server.py', \
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--modeldir', dest='modeldir',
                         help="Path to directory containing zpar English models",
                         required=True)
@@ -132,3 +132,7 @@ if __name__ == '__main__':
     # Start the server
     logging.info('Starting server on port {}...'.format(args.port))
     server.serve_forever()
+
+
+if __name__ == '__main__':
+    main()
