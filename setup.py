@@ -82,7 +82,7 @@ def read(fname):
 
 setup(
     name='python-zpar',
-    version='0.5',
+    version='0.6',
     description='A Wrapper around the ZPar statistical tagger/parser for English',
     maintainer='Nitin Madnani',
     maintainer_email='nmadnani@ets.org',
