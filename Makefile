@@ -2,10 +2,10 @@ all: python-zpar
 
 clean:
 	rm -rf /tmp/zpar
-	rm -f /tmp/zpar.zip
+	rm -f /tmp/zpar.tar.gz
 
-python-zpar: clean /tmp/zpar.zip
-	unzip -q /tmp/zpar.zip -d /tmp
+python-zpar: clean /tmp/zpar.tar.gz
+	tar -C /tmp/zpar -zxf /tmp/zpar.tar.gz --strip-components=1
 	cp src/zpar.lib.cpp /tmp/zpar/src/english
 	cp src/Makefile.lib.zpar /tmp/zpar
 	cp src/Makefile /tmp/zpar
@@ -14,7 +14,8 @@ python-zpar: clean /tmp/zpar.zip
 	mkdir -p zpar/dist
 	cp /tmp/zpar/dist/zpar.so zpar/dist/
 
-/tmp/zpar.zip:
-	wget -N http://sourceforge.net/projects/zpar/files/latest/zpar.zip -O /tmp/zpar.zip
+/tmp/zpar.tar.gz:
+	wget -N http://sourceforge.net/projects/zpar/files/latest/zpar.tar.gz -O /tmp/zpar.tar.gz
 	touch $@
+	mkdir /tmp/zpar
 

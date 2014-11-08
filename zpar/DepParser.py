@@ -31,10 +31,16 @@ class DepParser(object):
             raise OSError('Cannot find dependency parser model at {}\n'.format(modelpath))
 
     def dep_parse_sentence(self, sentence, tokenize=True):
-        zpar_compatible_sentence = sentence.strip() + "\n "
-        zpar_compatible_sentence = zpar_compatible_sentence.encode('utf-8')
-        parsed_sent = self._dep_parse_sentence(zpar_compatible_sentence, tokenize)
-        return parsed_sent.decode('utf-8')
+        if not sentence.strip():
+            # return empty string if the input is empty
+            ans = ""
+        else:
+            zpar_compatible_sentence = sentence.strip() + "\n "
+            zpar_compatible_sentence = zpar_compatible_sentence.encode('utf-8')
+            parsed_sent = self._dep_parse_sentence(zpar_compatible_sentence, tokenize)
+            ans = parsed_sent.decode('utf-8')
+
+        return ans
 
     def dep_parse_file(self, inputfile, outputfile, tokenize=True):
         if os.path.exists(inputfile):

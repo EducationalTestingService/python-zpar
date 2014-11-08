@@ -30,10 +30,16 @@ class Tagger(object):
             raise OSError('Cannot find tagger model at {}\n'.format(modelpath))
 
     def tag_sentence(self, sentence, tokenize=True):
-        zpar_compatible_sentence = sentence.strip() + "\n "
-        zpar_compatible_sentence = zpar_compatible_sentence.encode('utf-8')
-        tagged_sent = self._tag_sentence(zpar_compatible_sentence, tokenize)
-        return tagged_sent.decode('utf-8')
+        if not sentence.strip():
+            # return empty string if the input is empty
+            ans = ""
+        else:
+            zpar_compatible_sentence = sentence.strip() + "\n "
+            zpar_compatible_sentence = zpar_compatible_sentence.encode('utf-8')
+            tagged_sent = self._tag_sentence(zpar_compatible_sentence, tokenize)
+            ans = tagged_sent.decode('utf-8')
+
+        return ans
 
     def tag_file(self, inputfile, outputfile, tokenize=True):
         if os.path.exists(inputfile):
