@@ -7,6 +7,7 @@
 import _ctypes
 import ctypes as c
 import os
+import sys
 
 from .Tagger import Tagger
 from .Parser import Parser
@@ -24,14 +25,28 @@ class ZPar(object):
         base_path = os.path.dirname(os.path.abspath(__file__))
         zpar_path = os.path.join(base_path, 'dist', 'zpar.so')
         self.libptr = c.cdll.LoadLibrary(zpar_path)
+
+        # call the library's initialize method to instantiate
+        # the session object associated with this session
+        self._initialize = self.libptr.initialize
+        self._initialize.restype = c.c_void_p
+        self._initialize.argtypes = None
+        self._zpar_session_obj = self._initialize()
+
         self.modelpath = modelpath
         self.tagger = None
         self.parser = None
         self.depparser = None
 
     def close(self):
+
         # unload the models on the C++ side
-        self.libptr.unload_models()
+        _unload_models = self.libptr.unload_models
+        _unload_models.restype = None
+        _unload_models.argtypes = [c.c_void_p]
+        self.libptr.unload_models(self._zpar_session_obj)
+
+        sys.stderr.write('Done unloading\n')
 
         # clean up the data structures on the python side
         if self.tagger:
@@ -54,6 +69,7 @@ class ZPar(object):
         # pretty sure once the old object libptr was pointed to should
         # get garbage collected at some point after this
         self.libptr = None
+        self._zpar_session_obj = None
 
     def __enter__(self):
         """Enable ZPar to be used as a ContextManager"""
@@ -68,7 +84,7 @@ class ZPar(object):
             raise Exception('Cannot get tagger from uninitialized ZPar environment.')
             return None
         else:
-            self.tagger = Tagger(self.modelpath, self.libptr)
+            self.tagger = Tagger(self.modelpath, self.libptr, self._zpar_session_obj)
             return self.tagger
 
     def get_parser(self):
@@ -76,7 +92,7 @@ class ZPar(object):
             raise Exception('Cannot get parser from uninitialized ZPar environment.')
             return None
         else:
-            self.parser = Parser(self.modelpath, self.libptr)
+            self.parser = Parser(self.modelpath, self.libptr, self._zpar_session_obj)
             return self.parser
 
     def get_depparser(self):
@@ -84,6 +100,6 @@ class ZPar(object):
             raise Exception('Cannot get parser from uninitialized ZPar environment.')
             return None
         else:
-            self.depparser = DepParser(self.modelpath, self.libptr)
+            self.depparser = DepParser(self.modelpath, self.libptr, self._zpar_session_obj)
             return self.depparser
 
