@@ -46,8 +46,6 @@ class ZPar(object):
         _unload_models.argtypes = [c.c_void_p]
         self.libptr.unload_models(self._zpar_session_obj)
 
-        sys.stderr.write('Done unloading\n')
-
         # clean up the data structures on the python side
         if self.tagger:
             self.tagger.cleanup()
