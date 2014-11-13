@@ -124,7 +124,14 @@ extern "C" int load_tagger(void* vzps, const char* sFeaturePath) {
     if (!FileExists(sTaggerFeatureFile)) {
         return 1;
     }
+
+    // redirect stdout to stderr since ZPar prints status
+    // messages on stdout instead of stderr
+    std::streambuf* oldCout = std::cout.rdbuf();
+    std::cout.rdbuf(std::cerr.rdbuf());
     CTagger* tagger = new CTagger(sTaggerFeatureFile, false);
+    // restore stdout
+    std::cout.rdbuf(oldCout);
     zps->tagger = tagger;
     return 0;
 }
@@ -148,7 +155,13 @@ extern "C" int load_parser(void* vzps, const char *sFeaturePath) {
     if (!FileExists(sConParserFeatureFile)) {
         return 1;
     }
+    // redirect stdout to stderr since ZPar prints status
+    // messages on stdout instead of stderr
+    std::streambuf* oldCout = std::cout.rdbuf();
+    std::cout.rdbuf(std::cerr.rdbuf());
     conparser = new CConParser(sConParserFeatureFile, false);
+    // restore stdout
+    std::cout.rdbuf(oldCout);
     zps->conparser = conparser;
     return 0;
 }
@@ -172,7 +185,13 @@ extern "C" int load_depparser(void* vzps, const char *sFeaturePath) {
     if (!FileExists(sDepParserFeatureFile)) {
         return 1;
     }
+    // redirect stdout to stderr since ZPar prints status
+    // messages on stdout instead of stderr
+    std::streambuf* oldCout = std::cout.rdbuf();
+    std::cout.rdbuf(std::cerr.rdbuf());
     depparser = new CDepParser(sDepParserFeatureFile, false);
+    // restore stdout
+    std::cout.rdbuf(oldCout);
     zps->depparser = depparser;
     return 0;
 }
@@ -539,28 +558,8 @@ extern "C" void unload_models(void* vzps)
 // extern "C" int main(int argc, char *argv[])
 // {
 //        void* vzps = initialize();
-//        std::cerr << "initialized zpar object at " << &vzps << std::endl;
 //        load_tagger(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
 //        std::cout << std::string(tag_sentence(vzps, "I said I am going to the market.", false));
 //        unload_models(vzps);
-
-//        vzps = initialize();
-//        std::cerr << "initialized zpar object at " << &vzps << std::endl;
-//        load_tagger(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
-//        std::cout << std::string(tag_sentence(vzps, "I said I am going to the market.", false));
-//        unload_models(vzps);
-//     std::cout << std::string(tag_sentence("I said `` I am going to the market . \"", false)) << std::endl;
-//     std::cout << std::string(parse_sentence("I said `` I am going to the market . \"", false)) << std::endl;
-//     std::cout << std::string(dep_parse_sentence("I said `` I am going to the market . \"", false)) << std::endl;
-//     std::cout << std::string(tag_sentence("I said \"I am going to the market .\"", true)) << std::endl;
-//     std::cout << std::string(parse_sentence("I said \"I am going to the market .\"", true)) << std::endl;
-//     std::cout << std::string(dep_parse_sentence("I said \"I am going to the market .\"", true)) << std::endl;
-//     tag_file("/scratch/nmadnani/zpar-new/test.txt", "/scratch/nmadnani/zpar-new/test.tag", false);
-//     parse_file("/scratch/nmadnani/zpar-new/test.txt", "/scratch/nmadnani/zpar-new/test.parse", false);
-//     dep_parse_file("/scratch/nmadnani/zpar-new/test.txt", "/scratch/nmadnani/zpar-new/test.dep", false);
-//     tag_file("/scratch/nmadnani/zpar-new/test2.txt", "/scratch/nmadnani/zpar-new/test2.tag", true);
-//     parse_file("/scratch/nmadnani/zpar-new/test2.txt", "/scratch/nmadnani/zpar-new/test2.parse", true);
-//     dep_parse_file("/scratch/nmadnani/zpar-new/test2.txt", "/scratch/nmadnani/zpar-new/test2.dep", true);
-//     unload_models();
 //      return 0;
 // }
