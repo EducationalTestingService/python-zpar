@@ -1,2 +1,6 @@
 zpar.egg-info
 dist
+build
+build.sh
+python_zpar.egg-info
+zpar/__pycache__
