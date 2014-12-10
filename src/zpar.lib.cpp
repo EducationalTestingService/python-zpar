@@ -69,6 +69,37 @@ extern "C" void* initialize() {
    return (void *)zps;
 }
 
+// a utility function to output tagged data in the usual
+// "WORD/TAG" format as expected
+std::string format_tagged_vector(CTwoStringVector *tagged_sent)
+{
+
+    CTwoStringVector::const_iterator it;
+    CStringVector formatted_tagged_sent[1];
+    for (it = tagged_sent->begin(); it != tagged_sent->end(); ++it)
+    {
+        std::stringstream tmpss;
+        tmpss << it->first << "/" << it->second;
+        std::string tmpstr(tmpss.str());
+        formatted_tagged_sent->push_back(tmpstr);
+    }
+
+    int i;
+    std::stringstream oss;
+    for (i = 0; i < formatted_tagged_sent->size(); ++i)
+    {
+        oss << formatted_tagged_sent->at(i);
+        if (i != formatted_tagged_sent->size() - 1)
+        {
+            oss << " ";
+        }
+    }
+
+    std::string outstr(oss.str());
+    return outstr;
+
+}
+
 // A utility function to format the dependncy output
 // in CoNLL format
 std::string format_dependency_tree(CDependencyParse *parsed_sent)
@@ -212,9 +243,7 @@ extern "C" char* tag_sentence(void* vzps, const char *input_sentence, bool token
     tagger->tag(input_sent, tagged_sent);
 
     // format the tagged sentence properly and return
-    std::string tagvec;
-    CSentenceWriter output_writer(tagvec);
-    output_writer.writeSentence(tagged_sent, '/', false);
+    std::string tagvec = format_tagged_vector(tagged_sent);
     int tagveclen = tagvec.length();
 
     if (zps->output_buffer != NULL) {
