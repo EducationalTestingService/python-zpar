@@ -563,6 +563,51 @@ extern "C" void parse_file(void* vzps, const char *sInputFile, const char *sOutp
     fclose(outfp);
 }
 
+extern "C" void parse_tagged_file(void* vzps, const char *sInputFile, const char *sOutputFile, const char seperator='/')
+{
+
+    zparSession_t* zps = static_cast<zparSession_t *>(vzps);
+
+    std::cerr << "Processing file " <<  sInputFile << std::endl;
+
+    // initialize the input reader
+    CSentenceReader input_reader(sInputFile);
+
+    // open the output file
+    FILE *outfp = NULL;
+    outfp = fopen(sOutputFile, "w");
+
+    // initialize the temporary sentence variables
+    CTwoStringVector tagged_sent[1];
+    english::CCFGTree parsed_sent[1];
+
+    // get the parser that was stored earlier
+    CConParser *conparser = zps->conparser;
+
+    // read in and tokenize the given input file if asked
+    bool readSomething;
+    readSomething = input_reader.readTaggedSentence(tagged_sent, false, seperator);
+
+    while ( readSomething )
+    {
+        std::string parse = "";
+        if(tagged_sent->size() < MAX_SENTENCE_SIZE){
+            conparser->parse(*tagged_sent, parsed_sent);
+            parse = parsed_sent->str_unbinarized();
+        } else {
+            std::cerr << "Sentence too long. Writing empty string. Sentence: " << tagged_sent << std::endl;
+        }
+
+        fprintf(outfp, "%s\n", parse.c_str());
+
+        readSomething = input_reader.readTaggedSentence(tagged_sent, false, seperator);
+    }
+
+    // close the output file
+    std::cerr << "Wrote output to " << sOutputFile << std::endl;
+    fclose(outfp);
+}
+
 // Function to dependency parse all sentence in the given input file
 // and write parsed sentences to the given output file
 extern "C" void dep_parse_file(void* vzps, const char *sInputFile, const char *sOutputFile, bool tokenize)
@@ -628,6 +673,51 @@ extern "C" void dep_parse_file(void* vzps, const char *sInputFile, const char *s
     fclose(outfp);
 }
 
+extern "C" void dep_parse_tagged_file(void* vzps, const char *sInputFile, const char *sOutputFile, const char seperator='/')
+{
+
+    zparSession_t* zps = static_cast<zparSession_t *>(vzps);
+
+    std::cerr << "Processing file " <<  sInputFile << std::endl;
+
+    // initialize the input reader
+    CSentenceReader input_reader(sInputFile);
+
+    // open the output file
+    FILE *outfp = NULL;
+    outfp = fopen(sOutputFile, "w");
+
+    // initialize the temporary sentence variables
+    CTwoStringVector tagged_sent[1];
+    CDependencyParse parsed_sent[1];
+
+    // get the parser that was stored earlier
+    CDepParser *depparser = zps->depparser;
+
+    // read in and tokenize the given input file if asked
+    bool readSomething;
+    readSomething = input_reader.readTaggedSentence(tagged_sent, false, seperator);
+
+    while ( readSomething )
+    {
+        std::string deptree = "";
+        if(tagged_sent->size() < MAX_SENTENCE_SIZE){
+            depparser->parse(*tagged_sent, parsed_sent);
+            deptree = format_dependency_tree(parsed_sent);
+        } else {
+            std::cerr << "Sentence too long. Writing empty string. Sentence: " << tagged_sent << std::endl;
+        }
+
+        fprintf(outfp, "%s\n", deptree.c_str());
+
+        readSomething = input_reader.readTaggedSentence(tagged_sent, false, seperator);
+    }
+
+    // close the output file
+    std::cerr << "Wrote output to " << sOutputFile << std::endl;
+    fclose(outfp);
+}
+
 // Function to unload all the models
 extern "C" void unload_models(void* vzps)
 {
@@ -641,15 +731,16 @@ extern "C" void unload_models(void* vzps)
 }
 
 // A main function for testing
-extern "C" int main(int argc, char *argv[])
-{
-       void* vzps = initialize();
-       // load_tagger(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
-       load_parser(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
-       load_depparser(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
-       // tag_file(vzps, "/Users/nmadnani/work/python-zpar/examples/test.txt", "/Users/nmadnani/work/python-zpar/examples/test.tag", true);
-       std::cout << std::string(parse_tagged_sentence(vzps, "I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.")) << std::endl;
-       std::cout << std::string(dep_parse_tagged_sentence(vzps, "I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.")) << std::endl;
-       unload_models(vzps);
-     return 0;
-}
+// extern "C" int main(int argc, char *argv[])
+// {
+//        void* vzps = initialize();
+//        load_tagger(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
+//        load_parser(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
+//        load_depparser(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
+//        parse_tagged_file(vzps, "/Users/nmadnani/work/python-zpar/examples/test_tagged.txt", "/Users/nmadnani/work/python-zpar/examples/test_tagged.parse");
+//        dep_parse_tagged_file(vzps, "/Users/nmadnani/work/python-zpar/examples/test_tagged.txt", "/Users/nmadnani/work/python-zpar/examples/test_tagged.dep");
+//        std::cout << std::string(parse_tagged_sentence(vzps, "I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.")) << std::endl;
+//        std::cout << std::string(dep_parse_tagged_sentence(vzps, "I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.")) << std::endl;
+//        unload_models(vzps);
+//      return 0;
+// }
