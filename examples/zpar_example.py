@@ -31,10 +31,11 @@ if __name__ == '__main__':
         tagged_sent = tagger.tag_sentence("Do n't you want to come with me to the market ?", tokenize=False)
         print_(tagged_sent)
 
-        # get the dependency parses of the same two sentences
-        dep_parsed_sent = depparser.dep_parse_sentence("I am going to the market.")
+        # get the dependency parse of an already tagged sentence
+        dep_parsed_sent = depparser.dep_parse_tagged_sentence("I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.")
         print_(dep_parsed_sent)
 
+        # get the dependency parse of an already tokenized sentence
         dep_parsed_sent = depparser.dep_parse_sentence("Do n't you want to come with me to the market ?", tokenize=False)
         print_(dep_parsed_sent)
 
