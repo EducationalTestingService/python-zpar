@@ -26,9 +26,17 @@ class DepParser(object):
         self._dep_parse_sentence.restype = c.c_char_p
         self._dep_parse_sentence.argtypes = [c.c_void_p, c.c_char_p, c.c_bool]
 
-        self._parse_file = libptr.dep_parse_file
-        self._parse_file.restype = None
-        self._parse_file.argtypes = [c.c_void_p, c.c_char_p, c.c_char_p, c.c_bool]
+        self._dep_parse_file = libptr.dep_parse_file
+        self._dep_parse_file.restype = None
+        self._dep_parse_file.argtypes = [c.c_void_p, c.c_char_p, c.c_char_p, c.c_bool]
+
+        self._dep_parse_tagged_sentence = libptr.dep_parse_tagged_sentence
+        self._dep_parse_tagged_sentence.restype = c.c_char_p
+        self._dep_parse_tagged_sentence.argtypes = [c.c_void_p, c.c_char_p, c.c_char]
+
+        self._dep_parse_tagged_file = libptr.dep_parse_tagged_file
+        self._dep_parse_tagged_file.restype = None
+        self._dep_parse_tagged_file.argtypes = [c.c_void_p, c.c_char_p, c.c_char_p, c.c_char]
 
         if self._load_depparser(self._zpar_session_obj, modelpath.encode('utf-8')):
             raise OSError('Cannot find dependency parser model at {}\n'.format(modelpath))
@@ -47,7 +55,23 @@ class DepParser(object):
 
     def dep_parse_file(self, inputfile, outputfile, tokenize=True):
         if os.path.exists(inputfile):
-            self._parse_file(self._zpar_session_obj, inputfile.encode('utf-8'), outputfile.encode('utf-8'), tokenize)
+            self._dep_parse_file(self._zpar_session_obj, inputfile.encode('utf-8'), outputfile.encode('utf-8'), tokenize)
+        else:
+            raise OSError('File {} does not exist.'.format(inputfile))
+
+    def dep_parse_tagged_sentence(self, tagged_sentence, sep='/'):
+        if not tagged_sentence.strip():
+            # return empty string if the input is empty
+            ans = ""
+        else:
+            zpar_compatible_sentence = tagged_sentence.strip().encode('utf-8')
+            parsed_sent = self._dep_parse_tagged_sentence(self._zpar_session_obj, zpar_compatible_sentence, sep.encode('utf-8'))
+            ans = parsed_sent.decode('utf-8')
+        return ans
+
+    def dep_parse_tagged_file(self, inputfile, outputfile, sep='/'):
+        if os.path.exists(inputfile):
+            self._dep_parse_tagged_file(self._zpar_session_obj, inputfile.encode('utf-8'), outputfile.encode('utf-8'), sep.encode('utf-8'))
         else:
             raise OSError('File {} does not exist.'.format(inputfile))
 

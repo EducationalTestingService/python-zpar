@@ -166,6 +166,8 @@ extern "C" int load_parser(void* vzps, const char *sFeaturePath) {
     return 0;
 }
 
+
+
 // The function to load the dependency parser model
 extern "C" int load_depparser(void* vzps, const char *sFeaturePath) {
 
@@ -282,19 +284,61 @@ extern "C" char* parse_sentence(void* vzps, const char *input_sentence, bool tok
         zps->output_buffer = new char[1];
         strcpy(zps->output_buffer, "");
     } else {
-        // initialize the variable that will hold the tagged sentence
+        // initialize the variables that will hold the tagged and parsed sentences
         CTwoStringVector tagged_sent[1];
         english::CCFGTree parsed_sent[1];
 
-        // get the tagger that was stored earlier
+        // get the tagger and parser that were stored earlier
         CTagger *tagger = zps->tagger;
         CConParser *conparser = zps->conparser;
 
-        // tag the sentence
+        // tag and parse the sentence
         tagger->tag(tokenized_sent, tagged_sent);
         conparser->parse(*tagged_sent, parsed_sent);
 
-        // now put the tagged_sent into a string stream
+        // now put the parsed sentence into a string stream
+        std::string parse = parsed_sent->str_unbinarized();
+        int parselen = parse.length();
+        zps->output_buffer = new char[parselen + 1];
+        strcpy(zps->output_buffer, parse.c_str());
+    }
+
+    return zps->output_buffer;
+}
+
+extern "C" char* parse_tagged_sentence(void* vzps, const char *input_tagged_sentence, const char seperator='/')
+{
+
+    zparSession_t* zps = static_cast<zparSession_t *>(vzps);
+
+    // create a temporary string stream from the input char *
+    CSentenceReader input_reader(std::string(input_tagged_sentence), false);
+
+    // read the tagged sentence into a CTwoStringVector
+    CTwoStringVector tagged_sent[1];
+    input_reader.readTaggedSentence(tagged_sent, false, seperator);
+
+    if (zps->output_buffer != NULL) {
+        delete zps->output_buffer;
+        zps->output_buffer = NULL;
+    }
+
+    if(tagged_sent->size() >= MAX_SENTENCE_SIZE){
+        // The ZPar code asserts that length < MAX_SENTENCE_SIZE...
+        std::cerr << "Sentence too long. Returning empty string. Sentence: " << input_tagged_sentence << std::endl;
+        zps->output_buffer = new char[1];
+        strcpy(zps->output_buffer, "");
+    } else {
+        // initialize the variable that will hold the parsed sentence
+        english::CCFGTree parsed_sent[1];
+
+        // get the parser that was stored earlier
+        CConParser *conparser = zps->conparser;
+
+        // parse the tagged sentence
+        conparser->parse(*tagged_sent, parsed_sent);
+
+        // now put the parsed sentence into a string stream
         std::string parse = parsed_sent->str_unbinarized();
         int parselen = parse.length();
         zps->output_buffer = new char[parselen + 1];
@@ -321,10 +365,6 @@ extern "C" char* dep_parse_sentence(void* vzps, const char *input_sentence, bool
         input_reader.readSegmentedSentence(tokenized_sent);
     }
 
-    // initialize the variable that will hold the tagged sentence
-    CTwoStringVector tagged_sent[1];
-    CDependencyParse parsed_sent[1];
-
     if (zps->output_buffer != NULL) {
         delete zps->output_buffer;
         zps->output_buffer = NULL;
@@ -336,12 +376,60 @@ extern "C" char* dep_parse_sentence(void* vzps, const char *input_sentence, bool
         zps->output_buffer = new char[1];
         strcpy(zps->output_buffer, "");
     } else {
-        // get the tagger that was stored earlier
+
+        // initialize the variable that will hold the tagged and parsed sentences
+        CTwoStringVector tagged_sent[1];
+        CDependencyParse parsed_sent[1];
+
+        // get the tagger and parser that were stored earlier
         CTagger *tagger = zps->tagger;
         CDepParser *depparser = zps->depparser;
 
-        // tag the sentence
+        // tag and parse the sentence
         tagger->tag(tokenized_sent, tagged_sent);
+        depparser->parse(*tagged_sent, parsed_sent);
+
+        // now output the formatted dependency tree
+        std::string deptree = format_dependency_tree(parsed_sent);
+        int deptreelen = deptree.length();
+        zps->output_buffer = new char[deptreelen + 1];
+        strcpy(zps->output_buffer, deptree.c_str());
+    }
+
+    return zps->output_buffer;
+}
+
+// Function to dependency parse a sentence
+extern "C" char* dep_parse_tagged_sentence(void* vzps, const char *input_tagged_sentence, const char seperator='/')
+{
+    zparSession_t* zps = static_cast<zparSession_t *>(vzps);
+
+    // create a temporary string stream from the input char *
+    CSentenceReader input_reader(std::string(input_tagged_sentence), false);
+
+    // read the tagged sentence into a CTwoStringVector
+    CTwoStringVector tagged_sent[1];
+    input_reader.readTaggedSentence(tagged_sent, false, seperator);
+
+    if (zps->output_buffer != NULL) {
+        delete zps->output_buffer;
+        zps->output_buffer = NULL;
+    }
+
+    if(tagged_sent->size() >= MAX_SENTENCE_SIZE){
+        // The ZPar code asserts that length < MAX_SENTENCE_SIZE...
+        std::cerr << "Sentence too long. Returning empty string. Sentence: " << input_tagged_sentence << std::endl;
+        zps->output_buffer = new char[1];
+        strcpy(zps->output_buffer, "");
+    } else {
+
+        // initialize the variable that will hold the parsed sentence
+        CDependencyParse parsed_sent[1];
+
+        // get the parser that was stored earlier
+        CDepParser *depparser = zps->depparser;
+
+        // parse the sentence
         depparser->parse(*tagged_sent, parsed_sent);
 
         // now output the formatted dependency tree
@@ -366,16 +454,16 @@ extern "C" void tag_file(void* vzps, const char *sInputFile, const char *sOutput
     // initialize the input reader
     CSentenceReader input_reader(sInputFile);
 
-    // open the output file
-    FILE *outfp = NULL;
-    outfp = fopen(sOutputFile, "w");
-
     // initialize the temporary sentence variables
     CStringVector tokenized_sent[1];
     CTwoStringVector tagged_sent[1];
 
     // get the tagger and the parser that were stored earlier
     CTagger *tagger = zps->tagger;
+
+    // initialize the output file writer
+    std::string outputFileName = std::string(sOutputFile);
+    CSentenceWriter output_writer(outputFileName);
 
     // read in and tokenize the given input file if asked
     bool readSomething;
@@ -396,8 +484,7 @@ extern "C" void tag_file(void* vzps, const char *sInputFile, const char *sOutput
         tagger->tag(tokenized_sent, tagged_sent);
 
         // write the formatted sentence to the output file
-        std::string tagvec = format_tagged_vector(tagged_sent);
-        fprintf(outfp, "%s\n", tagvec.c_str());
+        output_writer.writeSentence(tagged_sent, '/', true);
 
         if (tokenize) {
             readSomething = input_reader.readSegmentedSentenceAndTokenize(tokenized_sent);
@@ -409,7 +496,6 @@ extern "C" void tag_file(void* vzps, const char *sInputFile, const char *sOutput
 
     // close the output file
     std::cerr << "Wrote output to " << sOutputFile << std::endl;
-    fclose(outfp);
 }
 
 // Function to constituency parse all sentence in the given input file
@@ -470,6 +556,51 @@ extern "C" void parse_file(void* vzps, const char *sInputFile, const char *sOutp
         else {
             readSomething = input_reader.readSegmentedSentence(tokenized_sent);
         }
+    }
+
+    // close the output file
+    std::cerr << "Wrote output to " << sOutputFile << std::endl;
+    fclose(outfp);
+}
+
+extern "C" void parse_tagged_file(void* vzps, const char *sInputFile, const char *sOutputFile, const char seperator='/')
+{
+
+    zparSession_t* zps = static_cast<zparSession_t *>(vzps);
+
+    std::cerr << "Processing file " <<  sInputFile << std::endl;
+
+    // initialize the input reader
+    CSentenceReader input_reader(sInputFile);
+
+    // open the output file
+    FILE *outfp = NULL;
+    outfp = fopen(sOutputFile, "w");
+
+    // initialize the temporary sentence variables
+    CTwoStringVector tagged_sent[1];
+    english::CCFGTree parsed_sent[1];
+
+    // get the parser that was stored earlier
+    CConParser *conparser = zps->conparser;
+
+    // read in and tokenize the given input file if asked
+    bool readSomething;
+    readSomething = input_reader.readTaggedSentence(tagged_sent, false, seperator);
+
+    while ( readSomething )
+    {
+        std::string parse = "";
+        if(tagged_sent->size() < MAX_SENTENCE_SIZE){
+            conparser->parse(*tagged_sent, parsed_sent);
+            parse = parsed_sent->str_unbinarized();
+        } else {
+            std::cerr << "Sentence too long. Writing empty string. Sentence: " << tagged_sent << std::endl;
+        }
+
+        fprintf(outfp, "%s\n", parse.c_str());
+
+        readSomething = input_reader.readTaggedSentence(tagged_sent, false, seperator);
     }
 
     // close the output file
@@ -542,6 +673,51 @@ extern "C" void dep_parse_file(void* vzps, const char *sInputFile, const char *s
     fclose(outfp);
 }
 
+extern "C" void dep_parse_tagged_file(void* vzps, const char *sInputFile, const char *sOutputFile, const char seperator='/')
+{
+
+    zparSession_t* zps = static_cast<zparSession_t *>(vzps);
+
+    std::cerr << "Processing file " <<  sInputFile << std::endl;
+
+    // initialize the input reader
+    CSentenceReader input_reader(sInputFile);
+
+    // open the output file
+    FILE *outfp = NULL;
+    outfp = fopen(sOutputFile, "w");
+
+    // initialize the temporary sentence variables
+    CTwoStringVector tagged_sent[1];
+    CDependencyParse parsed_sent[1];
+
+    // get the parser that was stored earlier
+    CDepParser *depparser = zps->depparser;
+
+    // read in and tokenize the given input file if asked
+    bool readSomething;
+    readSomething = input_reader.readTaggedSentence(tagged_sent, false, seperator);
+
+    while ( readSomething )
+    {
+        std::string deptree = "";
+        if(tagged_sent->size() < MAX_SENTENCE_SIZE){
+            depparser->parse(*tagged_sent, parsed_sent);
+            deptree = format_dependency_tree(parsed_sent);
+        } else {
+            std::cerr << "Sentence too long. Writing empty string. Sentence: " << tagged_sent << std::endl;
+        }
+
+        fprintf(outfp, "%s\n", deptree.c_str());
+
+        readSomething = input_reader.readTaggedSentence(tagged_sent, false, seperator);
+    }
+
+    // close the output file
+    std::cerr << "Wrote output to " << sOutputFile << std::endl;
+    fclose(outfp);
+}
+
 // Function to unload all the models
 extern "C" void unload_models(void* vzps)
 {
@@ -554,12 +730,17 @@ extern "C" void unload_models(void* vzps)
     zps = NULL;
 }
 
-// // A main function for testing
+// A main function for testing
 // extern "C" int main(int argc, char *argv[])
 // {
 //        void* vzps = initialize();
 //        load_tagger(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
-//        std::cout << std::string(tag_sentence(vzps, "I said I am going to the market.", false));
+//        load_parser(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
+//        load_depparser(vzps, "/Users/nmadnani/work/NLPTools/zpar/english-models");
+//        parse_tagged_file(vzps, "/Users/nmadnani/work/python-zpar/examples/test_tagged.txt", "/Users/nmadnani/work/python-zpar/examples/test_tagged.parse");
+//        dep_parse_tagged_file(vzps, "/Users/nmadnani/work/python-zpar/examples/test_tagged.txt", "/Users/nmadnani/work/python-zpar/examples/test_tagged.dep");
+//        std::cout << std::string(parse_tagged_sentence(vzps, "I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.")) << std::endl;
+//        std::cout << std::string(dep_parse_tagged_sentence(vzps, "I/PRP am/VBP going/VBG to/TO the/DT market/NN ./.")) << std::endl;
 //        unload_models(vzps);
 //      return 0;
 // }

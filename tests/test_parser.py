@@ -66,3 +66,33 @@ def check_parse_file(tokenize=False):
 def test_parse_file():
     yield check_parse_file, False
     yield check_parse_file, True
+
+
+def test_parse_tagged_sentence():
+    from tests import parser
+
+    tagged_sentence = "I/PRP 'm/VBP going/VBG to/TO the/DT market/NN ./."
+    correct_output = "(S (NP (PRP I)) (VP (VBP 'm) (VP (VBG going) (PP (TO to) (NP (DT the) (NN market))))) (. .))"
+    parsed_sentence = parser.parse_tagged_sentence(tagged_sentence)
+
+    assert_equal(parsed_sentence, correct_output)
+
+
+def test_parse_tagged_file():
+
+    from tests import parser
+
+    correct_output = ["(S (NP (PRP I)) (VP (VBP am) (VP (VBG going) (PP (TO to) (NP (DT the) (NN market))))) (. .))",
+                      "(SQ (VBP Are) (NP (PRP you)) (VP (VBG going) (S (VP (TO to) (VP (VB come) (PP (IN with) (NP (PRP me))))))) (. ?))"]
+
+    input_file = abspath(join(_my_dir, '..', 'examples', 'test_tagged.txt'))
+    output_file = abspath(join(_my_dir, '..', 'examples', 'test_tagged.parse'))
+
+    # parse the file
+    parser.parse_tagged_file(input_file, output_file)
+
+    # read the output file and make sure we have the expected output
+    with open(output_file, 'r') as outf:
+        output = [l.strip() for l in outf.readlines()]
+
+    assert_equal(output, correct_output)

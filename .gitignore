@@ -4,3 +4,5 @@ build
 build.sh
 python_zpar.egg-info
 zpar/__pycache__
+*.pyc
+test_twice.py

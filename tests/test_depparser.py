@@ -71,3 +71,39 @@ def check_dep_parse_file(tokenize=False):
 def test_dep_parse_file():
     yield check_dep_parse_file, False
     yield check_dep_parse_file, True
+
+
+def test_dep_parse_tagged_sentence():
+    from tests import depparser
+
+    tagged_sentence = "I/PRP 'm/VBP going/VBG to/TO the/DT market/NN ./."
+    correct_output = "I\tPRP\t1\tSUB\n'm\tVBP\t-1\tROOT\ngoing\tVBG\t1\tVC\nto\tTO\t2\tVMOD\nthe\tDT\t5\tNMOD\nmarket\tNN\t3\tPMOD\n.\t.\t1\tP\n"
+    parsed_sentence = depparser.dep_parse_tagged_sentence(tagged_sentence)
+
+    assert_equal(parsed_sentence, correct_output)
+
+
+def test_dep_parse_tagged_file():
+
+    from tests import depparser
+
+    correct_output = ['I\tPRP\t1\tSUB', 'am\tVBP\t-1\tROOT',
+                      'going\tVBG\t1\tVC', 'to\tTO\t2\tVMOD',
+                      'the\tDT\t5\tNMOD', 'market\tNN\t3\tPMOD',
+                      '.\t.\t1\tP', '', 'Are\tVBP\t-1\tROOT',
+                      'you\tPRP\t0\tSUB', 'going\tVBG\t0\tVMOD',
+                      'to\tTO\t4\tVMOD', 'come\tVB\t2\tVMOD',
+                      'with\tIN\t4\tVMOD', 'me\tPRP\t5\tPMOD',
+                      '?\t.\t0\tP', '']
+
+    input_file = abspath(join(_my_dir, '..', 'examples', 'test_tagged.txt'))
+    output_file = abspath(join(_my_dir, '..', 'examples', 'test_tagged.dep'))
+
+    # parse the file
+    depparser.dep_parse_tagged_file(input_file, output_file)
+
+    # read the output file and make sure we have the expected output
+    with open(output_file, 'r') as outf:
+        output = [l.strip() for l in outf.readlines()]
+
+    assert_equal(output, correct_output)
