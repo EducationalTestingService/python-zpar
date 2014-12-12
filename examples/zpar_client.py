@@ -52,11 +52,14 @@ if __name__ == '__main__':
     try:
 
         test_sentence = "Don't you want to come with me to the market?"
+        test_tagged_sentence = "I/PRP am/VBP going/VBG to/TO the/DT market/NN ./."
         test_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test.txt')
         tokenized_test_sentence = "Do n't you want to come to the market with me ?"
         tokenized_test_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_tokenized.txt')
+        tagged_test_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_tagged.txt')
         tag_outfile = os.path.join(os.getcwd(), 'test.tag')
         parse_outfile = os.path.join(os.getcwd(), 'test.parse')
+        parse_outfile2 = os.path.join(os.getcwd(), 'test_tagged.parse')
 
         logging.info('Tagging "{}"'.format(test_sentence))
         tagged_sent = proxy.tag_sentence(test_sentence)
@@ -70,6 +73,10 @@ if __name__ == '__main__':
         parsed_sent = proxy.parse_sentence(test_sentence)
         logging.info("Output: {}".format(parsed_sent))
 
+        logging.info('Parsing "{}"'.format(test_tagged_sentence))
+        parsed_sent = proxy.parse_tagged_sentence(test_tagged_sentence)
+        logging.info("Output: {}".format(parsed_sent))
+
         logging.info('Dep Parsing "{}"'.format(tokenized_test_sentence))
         parsed_sent = proxy.dep_parse_sentence(tokenized_test_sentence, False)
         logging.info("Output: {}".format(parsed_sent))
@@ -79,6 +86,9 @@ if __name__ == '__main__':
 
         logging.info('Parsing file {} into {}'.format(tokenized_test_file, parse_outfile))
         proxy.parse_file(tokenized_test_file, parse_outfile, False)
+
+        logging.info('Parsing tagged file {} into {}'.format(tagged_test_file, parse_outfile2))
+        proxy.parse_tagged_file(tagged_test_file, parse_outfile2)
 
     except socket.error as err:
         sys.stderr.write("{}\n".format(err))
