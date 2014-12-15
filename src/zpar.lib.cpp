@@ -9,8 +9,6 @@
 
 #define SIMPLE_HASH
 
-#include <Python.h>
-
 #include "definitions.h"
 #include "options.h"
 #include "tagger.h"
