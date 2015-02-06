@@ -48,13 +48,6 @@ with pip:
 
     pip install python-zpar
 
-If you are using ``conda``, things are even faster since everything is
-pre-compiled:
-
-.. code-block:: bash
-
-    conda install -c https://conda.binstar.org/desilinguist python-zpar
-
 **IMPORTANT**: On OS X, the installation will only work with ``gcc``
 installed using either `macports <http://www.macports.org>`__ or
 `homebrew <http://brew.sh/>`__. The zpar source cannot be compiled with
