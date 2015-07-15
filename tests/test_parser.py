@@ -1,6 +1,5 @@
 """
-Module for running a bunch of simple unit tests. Should be expanded more in
-the future.
+Run unit tests for the ZPar constituency parser.
 
 :author: Nitin Madnani (nmadnani@ets.org)
 """
@@ -8,14 +7,10 @@ the future.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import itertools
-import os
-
 from io import open
-from os.path import abspath, dirname, exists, join
+from os.path import abspath, dirname, join
 
-import numpy as np
-from nose.tools import eq_, raises, assert_equal, assert_not_equal
+from nose.tools import assert_equal
 
 _my_dir = abspath(dirname(__file__))
 

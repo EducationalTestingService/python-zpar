@@ -9,11 +9,9 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import glob
-import itertools
 import os
 
-from io import open
-from os.path import abspath, dirname, exists, join
+from os.path import abspath, dirname, join
 
 from zpar import ZPar
 
