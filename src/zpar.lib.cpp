@@ -423,7 +423,7 @@ extern "C" char* dep_parse_sentence(void* vzps, const char *input_sentence, bool
         strcpy(zps->output_buffer, "");
     }
 
-    return zps->output_buffer;       
+    return zps->output_buffer;
 }
 
 // Function to dependency parse a sentence
@@ -510,7 +510,7 @@ extern "C" void tag_file(void* vzps, const char *sInputFile, const char *sOutput
     }
     while ( readSomething )
     {
-        if ( tokenized_sent->back() == "\n" )
+        if ( !tokenized_sent->empty() && tokenized_sent->back() == "\n" )
         {
             tokenized_sent->pop_back();
         }
@@ -569,7 +569,7 @@ extern "C" void parse_file(void* vzps, const char *sInputFile, const char *sOutp
 
     while ( readSomething )
     {
-        if ( tokenized_sent->back() == "\n" )
+        if ( !tokenized_sent->empty() && tokenized_sent->back() == "\n" )
         {
             tokenized_sent->pop_back();
         }
@@ -679,7 +679,7 @@ extern "C" void dep_parse_file(void* vzps, const char *sInputFile, const char *s
 
     while ( readSomething )
     {
-        if ( tokenized_sent->back() == "\n" )
+        if ( !tokenized_sent->empty() && tokenized_sent->back() == "\n" )
         {
             tokenized_sent->pop_back();
         }
