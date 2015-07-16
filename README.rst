@@ -73,8 +73,8 @@ Usage
 ~~~~~
 
 To use python-zpar, you need the English models for ZPar. They can be
-downloaded from `here <http://sourceforge.net/projects/zpar>`__. There
-are three models: a part-of-speech tagger, a constituency parser, and a
+downloaded from the ZPar release page `here <https://github.com/frcchang/zpar/releases/tag/v0.7.5>`__.
+There are three models: a part-of-speech tagger, a constituency parser, and a
 dependency parser. For the purpose of the examples below, the models are
 in the ``english-models`` directory in the current directory.
 
