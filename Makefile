@@ -15,7 +15,7 @@ python-zpar: clean /tmp/zpar.tar.gz
 	cp /tmp/zpar/dist/zpar.so zpar/dist/
 
 /tmp/zpar.tar.gz:
-	wget -N http://sourceforge.net/projects/zpar/files/latest/zpar.tar.gz -O /tmp/zpar.tar.gz
+	wget -N https://github.com/frcchang/zpar/archive/v0.7.5.tar.gzz -O /tmp/zpar.tar.gz
 	touch $@
 	mkdir /tmp/zpar
 
