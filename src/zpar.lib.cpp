@@ -125,13 +125,7 @@ extern "C" int load_tagger(void* vzps, const char* sFeaturePath) {
         return 1;
     }
 
-    // redirect stdout to stderr since ZPar prints status
-    // messages on stdout instead of stderr
-    std::streambuf* oldCout = std::cout.rdbuf();
-    std::cout.rdbuf(std::cerr.rdbuf());
     CTagger* tagger = new CTagger(sTaggerFeatureFile, false);
-    // restore stdout
-    std::cout.rdbuf(oldCout);
     zps->tagger = tagger;
     return 0;
 }
@@ -155,13 +149,7 @@ extern "C" int load_parser(void* vzps, const char *sFeaturePath) {
     if (!FileExists(sConParserFeatureFile)) {
         return 1;
     }
-    // redirect stdout to stderr since ZPar prints status
-    // messages on stdout instead of stderr
-    std::streambuf* oldCout = std::cout.rdbuf();
-    std::cout.rdbuf(std::cerr.rdbuf());
     conparser = new CConParser(sConParserFeatureFile, false);
-    // restore stdout
-    std::cout.rdbuf(oldCout);
     zps->conparser = conparser;
     return 0;
 }
@@ -187,13 +175,7 @@ extern "C" int load_depparser(void* vzps, const char *sFeaturePath) {
     if (!FileExists(sDepParserFeatureFile)) {
         return 1;
     }
-    // redirect stdout to stderr since ZPar prints status
-    // messages on stdout instead of stderr
-    std::streambuf* oldCout = std::cout.rdbuf();
-    std::cout.rdbuf(std::cerr.rdbuf());
     depparser = new CDepParser(sDepParserFeatureFile, false);
-    // restore stdout
-    std::cout.rdbuf(oldCout);
     zps->depparser = depparser;
     return 0;
 }
