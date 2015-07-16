@@ -21,7 +21,7 @@ only provides a simply python wrapper but also provides an XML-RPC ZPar
 server to make batch-processing of large files easier.
 
 python-zpar uses
-`ctypes <https://docs.python.org/3.3/library/ctypes.html>`__, a very
+`ctypes <https://docs.python.org/3.4/library/ctypes.html>`__, a very
 cool foreign function library bundled with Python that allows calling
 functions in C DLLs or shared libraries directly.
 
@@ -205,7 +205,7 @@ when running the server, you'd need to specify the same here):
 
 
 Note that python-zpar and all of the example scripts should work with
-both Python 2.7 and Python 3.3. I have tested python-zpar on both Linux
+both Python 2.7 and Python 3.4. I have tested python-zpar on both Linux
 and Mac but not on Windows.
 
 Node.js version
