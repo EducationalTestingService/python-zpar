@@ -6,7 +6,6 @@
 import ctypes as c
 import logging
 import os
-import re
 
 # set up the logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.WARNING)
@@ -46,25 +45,11 @@ class Tagger(object):
             # return empty string if the input is empty
             ans = ""
         else:
-            zpar_compatible_sentence = sentence
-            all_caps_word = ''
-            # detect if we are processing a sentence with a single word in all caps
-            # because that is a known bug. This is a hack for now and will be removed
-            # once the underlying bug is fixed in ZPar.
-            m = re.match(r'^([A-Z]+)$', zpar_compatible_sentence.strip())
-            if m:
-                all_caps_word = m.group(1)
-                fixed_word = all_caps_word.title()
-                self.logger.warning('Encountered sentence with all caps single word '
-                                    'which triggers a known bug in ZPar. Title-casing '
-                                    'to avoid buggy behavior.')
-                zpar_compatible_sentence = sentence.title()
-            zpar_compatible_sentence = zpar_compatible_sentence.strip() + "\n "
+            zpar_compatible_sentence = sentence.strip() + "\n "
             zpar_compatible_sentence = zpar_compatible_sentence.encode('utf-8')
             tagged_sent = self._tag_sentence(self._zpar_session_obj, zpar_compatible_sentence, tokenize)
-            # replace the title-cased word with the original all-caps word if we need to
-            tagged_sent = tagged_sent.decode('utf-8')
-            ans = tagged_sent if not all_caps_word else tagged_sent.replace(fixed_word, all_caps_word)
+            ans = tagged_sent.decode('utf-8')
+            return ans
 
         return ans
 

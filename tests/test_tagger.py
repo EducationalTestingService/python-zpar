@@ -33,28 +33,6 @@ def test_tag_sentence():
     yield check_tag_sentence, True
 
 
-def test_zpar_bugfix_tags():
-    from tests import tagger
-
-    sentences = ['REBELLION',
-                 'I am going away .',
-                 'The rebellion is just another word for change and change is necessary to live .',
-                 'REBELLION',
-                 'REBELLION',
-                 'The rebellion is just another word for change and change is necessary to live .',
-                 'REBELLION',
-                 'This is just another sentence .',
-                 'REBELLION']
-
-    # tag the above sentences
-    tagged_sentences = [tagger.tag_sentence(s) for s in sentences]
-
-    # get the tags for all of the all-caps single-word sentences
-    # and make sure they are all NNP
-    indices_to_check = [0, 3, 4, 6, 8]
-    tags_to_check = [tagged_sentences[i].split('/')[1] for i in indices_to_check]
-    assert_equal(set(tags_to_check), {'NNP'})
-
 def check_tag_file(tokenize=False):
     """
     Check tag_file method with and without tokenization

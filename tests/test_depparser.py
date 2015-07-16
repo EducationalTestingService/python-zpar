@@ -32,29 +32,6 @@ def test_dep_parse_sentence():
     yield check_dep_parse_sentence, True
 
 
-def test_zpar_bugfix_depparse():
-    from tests import depparser
-
-    sentences = ['REBELLION',
-                 'I am going away .',
-                 'The rebellion is just another word for change and change is necessary to live .',
-                 'REBELLION',
-                 'REBELLION',
-                 'The rebellion is just another word for change and change is necessary to live .',
-                 'REBELLION',
-                 'This is just another sentence .',
-                 'REBELLION']
-
-    # tag the above sentences
-    parsed_sentences = [depparser.dep_parse_sentence(s) for s in sentences]
-
-    # get the parses for all of the all-caps single-word sentences
-    # and make sure they are all the same
-    indices_to_check = [0, 3, 4, 6, 8]
-    parses_to_check = [parsed_sentences[i] for i in indices_to_check]
-    assert_equal(set(parses_to_check), {'REBELLION\tNNP\t-1\tROOT\n'})
-
-
 def check_dep_parse_file(tokenize=False):
     """
     Check parse_file method with and without tokenization
