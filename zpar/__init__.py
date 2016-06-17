@@ -7,7 +7,6 @@
 import _ctypes
 import ctypes as c
 import os
-import sys
 
 from .Tagger import Tagger
 from .Parser import Parser
