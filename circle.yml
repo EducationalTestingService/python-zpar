@@ -2,8 +2,11 @@
 dependencies:
   cache_directories:
     - "~/miniconda3/pkgs"
+    - "~/english-models"
   override:
     - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+    - wget https://github.com/frcchang/zpar/releases/download/v0.7.5/english-models.zip
+    - unzip english-models.zip
     - chmod +x miniconda.sh
     - ./miniconda.sh -b -f
     - ${HOME}/miniconda3/bin/conda config --add channels desilinguist
@@ -15,4 +18,4 @@ dependencies:
 # Run test
 test:
   override:
-    - ${HOME}/miniconda3/bin/nosetests -v tests
+    - ZPAR_MODEL_DIR=${HOME}/english-models ${HOME}/miniconda3/bin/nosetests -v tests
