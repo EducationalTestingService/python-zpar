@@ -8,9 +8,6 @@ import ctypes as c
 import logging
 import os
 
-# set up the logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.WARNING)
-
 
 class DepParser(object):
     """The ZPar English Dependency Parser"""

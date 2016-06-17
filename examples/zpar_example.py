@@ -6,7 +6,7 @@ from six import print_
 
 from zpar import ZPar
 
-if __name__ == '__main__':
+def main():
     # set up an argument parser
     parser = argparse.ArgumentParser(prog='zpar_example.py')
     parser.add_argument('--modeldir', dest='modeldir',
@@ -49,3 +49,6 @@ if __name__ == '__main__':
         # compute dependency parses for all sentences in "test_tokenized.txt"
         tokenized_test_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_tokenized.txt')
         depparser.dep_parse_file(tokenized_test_file, "test.dep")
+
+if __name__ == '__main__':
+    main()
