@@ -1,6 +1,10 @@
 Introduction
 ~~~~~~~~~~~~
 
+.. image:: https://circleci.com/gh/EducationalTestingService/python-zpar.svg?style=shield
+   :alt: CircleCI Build status
+   :target: https://circleci.com/gh/EducationalTestingService/python-zpar
+
 **python-zpar** is a python wrapper around the `ZPar
 parser <http://www.sutd.edu.sg/cmsresource/faculty/yuezhang/zpar.html>`__.
 ZPar was written by `Yue Zhang <http://www.sutd.edu.sg/yuezhang.aspx>`__
