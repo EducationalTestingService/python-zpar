@@ -7,9 +7,6 @@ import ctypes as c
 import logging
 import os
 
-# set up the logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.WARNING)
-
 
 class Tagger(object):
     """The ZPar English POS Tagger"""
