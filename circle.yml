@@ -11,11 +11,13 @@ dependencies:
     - ./miniconda.sh -b -f
     - ${HOME}/miniconda3/bin/conda config --add channels desilinguist
     - ${HOME}/miniconda3/bin/conda update --yes conda
-    - ${HOME}/miniconda3/bin/conda install --yes six nose
+    - ${HOME}/miniconda3/bin/conda install --yes six nose nltk
+    - ${HOME}/miniconda3/bin/python -m nltk.downloader wordnet -d ${HOME}/nltk_data
     - make python-zpar
     - ${HOME}/miniconda3/bin/pip install -e .
 
 # Run test
 test:
   override:
-    - ZPAR_MODEL_DIR=${HOME}/english-models ${HOME}/miniconda3/bin/nosetests -v tests
+    - NLTK_DATA=${HOME}/nltk_data ZPAR_MODEL_DIR=${HOME}/english-models ${HOME}/miniconda3/bin/nosetests -v tests/test_tagger.py tests/test_parser.py tests/test_depparser.py
+    - ZPAR_MODEL_DIR=${HOME}/english-models ${HOME}/miniconda3/bin/nosetests -v tests/test_depparser_no_wordnet.py
