@@ -20,4 +20,4 @@ dependencies:
 test:
   override:
     - NLTK_DATA=${HOME}/nltk_data ZPAR_MODEL_DIR=${HOME}/english-models ${HOME}/miniconda3/bin/nosetests -v tests/test_tagger.py tests/test_parser.py tests/test_depparser.py
-    - ZPAR_MODEL_DIR=${HOME}/english-models ${HOME}/miniconda3/bin/nosetests -v tests/test_depparser_no_wordnet.py
+    - NLTK_DATA= ZPAR_MODEL_DIR=${HOME}/english-models ${HOME}/miniconda3/bin/nosetests -v tests/test_depparser_no_wordnet.py
