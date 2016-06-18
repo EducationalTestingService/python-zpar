@@ -7,13 +7,51 @@ Run unit tests for the ZPar constituency parser.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import glob
+import os
+
 from io import open
 from itertools import product
 from os.path import abspath, dirname, join
 
 from nose.tools import assert_equal
+from zpar import ZPar
 
 _my_dir = abspath(dirname(__file__))
+
+z = None
+parser = None
+
+
+def setUp():
+    """
+    set up things we need for the tests
+    """
+    global z, parser
+
+    assert 'ZPAR_MODEL_DIR' in os.environ
+
+    model_dir = os.environ['ZPAR_MODEL_DIR']
+
+    z = ZPar(model_dir)
+    parser = z.get_parser()
+
+
+def tearDown():
+    """
+    Clean up after the tests
+    """
+    global z, parser
+
+    if z:
+        z.close()
+        del parser
+        del z
+
+    # delete all the files we may have created
+    data_dir = abspath(join(_my_dir, '..', 'examples'))
+    for f in glob.glob(join(data_dir, 'test*.parse')):
+        os.unlink(f)
 
 
 def check_parse_sentence(tokenize=False, tagged=False):
@@ -21,8 +59,7 @@ def check_parse_sentence(tokenize=False, tagged=False):
     Check parse_sentence method with and without tokenization
     and with and without pre-tagged output.
     """
-    from tests import parser
-
+    global parser
 
     if tagged:
         sentence = "I/PRP 'm/VBP going/VBG to/TO the/DT market/NN ./."
@@ -52,8 +89,7 @@ def check_parse_file(tokenize=False, tagged=False):
     Check parse_file method with and without tokenization
     and with and without pre-tagged output
     """
-
-    from tests import parser
+    global parser
 
     if tagged:
         prefix = 'test_tagged'

@@ -1,5 +1,5 @@
 """ "
-Run unit tests for the ZPar dependency parser.
+Run unit tests for the ZPar dependency parser without wordnet access.
 
 :author: Nitin Madnani (nmadnani@ets.org)
 """
@@ -7,13 +7,52 @@ Run unit tests for the ZPar dependency parser.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import glob
+import os
+
 from io import open
 from itertools import product
 from os.path import abspath, dirname, join
 
 from nose.tools import assert_equal
+from zpar import ZPar
 
 _my_dir = abspath(dirname(__file__))
+
+z = None
+depparser = None
+
+
+def setUp():
+    """
+    set up things we need for the tests
+    """
+    global z, depparser
+
+    assert 'ZPAR_MODEL_DIR' in os.environ
+
+    model_dir = os.environ['ZPAR_MODEL_DIR']
+
+    z = ZPar(model_dir)
+    depparser = z.get_depparser()
+
+
+def tearDown():
+    """
+    Clean up after the tests
+    """
+    global z, depparser
+
+    if z:
+        z.close()
+        del depparser
+        del z
+
+    # delete all the files we may have created
+    data_dir = abspath(join(_my_dir, '..', 'examples'))
+    for f in glob.glob(join(data_dir, 'test*.dep')):
+        os.unlink(f)
+
 
 def check_dep_parse_sentence_no_wordnet(tokenize=False,
                                         with_lemmas=False,
@@ -24,7 +63,7 @@ def check_dep_parse_sentence_no_wordnet(tokenize=False,
     all under the condition that there is no wordnet corpus
     accessible to nltk.
     """
-    from tests import depparser
+    global depparser
 
     if tagged:
         sentence = "I/PRP 'm/VBP going/VBG to/TO the/DT market/NN ./."
@@ -65,7 +104,7 @@ def check_dep_parse_file_no_wordnet(tokenize=False,
     all under the condition that there is no wordnet corpus
     accessible to nltk.
     """
-    from tests import depparser
+    global depparser
 
     if tagged:
         prefix = 'test_tagged'
