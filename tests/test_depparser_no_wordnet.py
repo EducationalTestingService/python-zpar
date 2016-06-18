@@ -15,13 +15,14 @@ from nose.tools import assert_equal
 
 _my_dir = abspath(dirname(__file__))
 
-
-def check_dep_parse_sentence(tokenize=False,
-                             with_lemmas=False,
-                             tagged=False):
+def check_dep_parse_sentence_no_wordnet(tokenize=False,
+                                        with_lemmas=False,
+                                        tagged=False):
     """
     Check dep_parse_sentence method with and without tokenization,
-    with and without lemmas, and without pre-tagged output.
+    with and without lemmas, and with and without pre-tagged output,
+    all under the condition that there is no wordnet corpus
+    accessible to nltk.
     """
     from tests import depparser
 
@@ -34,7 +35,6 @@ def check_dep_parse_sentence(tokenize=False,
             sentence = "I 'm going to the market ."
 
     correct_output = "I\tPRP\t1\tSUB\n'm\tVBP\t-1\tROOT\ngoing\tVBG\t1\tVC\nto\tTO\t2\tVMOD\nthe\tDT\t5\tNMOD\nmarket\tNN\t3\tPMOD\n.\t.\t1\tP\n"
-    correct_output_with_lemmas = "I\tPRP\t1\tSUB\tI\n'm\tVBP\t-1\tROOT\t'm\ngoing\tVBG\t1\tVC\tgo\nto\tTO\t2\tVMOD\tto\nthe\tDT\t5\tNMOD\tthe\nmarket\tNN\t3\tPMOD\tmarket\n.\t.\t1\tP\t.\n"
     if not tagged:
         parsed_sentence = depparser.dep_parse_sentence(sentence,
                                                        tokenize=tokenize,
@@ -43,29 +43,27 @@ def check_dep_parse_sentence(tokenize=False,
         parsed_sentence = depparser.dep_parse_tagged_sentence(sentence,
                                                               with_lemmas=with_lemmas)
 
-    if with_lemmas:
-        assert_equal(parsed_sentence, correct_output_with_lemmas)
-    else:
-        assert_equal(parsed_sentence, correct_output)
+    assert_equal(parsed_sentence, correct_output)
 
 
-def test_dep_parse_sentence():
+def test_dep_parse_sentence_no_wordnet():
     for (tokenize, with_lemmas, tagged) in product([True, False],
                                                        [True, False],
                                                        [True, False]):
-        yield (check_dep_parse_sentence,
+        yield (check_dep_parse_sentence_no_wordnet,
                tokenize,
                with_lemmas,
                tagged)
 
 
-def check_dep_parse_file(tokenize=False,
-                         with_lemmas=False,
-                         tagged=False):
+def check_dep_parse_file_no_wordnet(tokenize=False,
+                                    with_lemmas=False,
+                                    tagged=False):
     """
     Check parse_file method with and without tokenization,
-    with and without lemmas, with and without access
-    to wordnet, and with and without pre-tagged output.
+    with and without lemmas, and with and without pre-tagged output,
+    all under the condition that there is no wordnet corpus
+    accessible to nltk.
     """
     from tests import depparser
 
@@ -86,15 +84,6 @@ def check_dep_parse_file(tokenize=False,
                       'with\tIN\t4\tVMOD', 'me\tPRP\t5\tPMOD',
                       '?\t.\t0\tP', '']
 
-    correct_output_with_lemmas = ['I\tPRP\t1\tSUB\tI', 'am\tVBP\t-1\tROOT\tbe',
-                                  'going\tVBG\t1\tVC\tgo', 'to\tTO\t2\tVMOD\tto',
-                                  'the\tDT\t5\tNMOD\tthe', 'market\tNN\t3\tPMOD\tmarket',
-                                  '.\t.\t1\tP\t.', '', 'Are\tVBP\t-1\tROOT\tAre',
-                                  'you\tPRP\t0\tSUB\tyou', 'going\tVBG\t0\tVMOD\tgo',
-                                  'to\tTO\t4\tVMOD\tto', 'come\tVB\t2\tVMOD\tcome',
-                                  'with\tIN\t4\tVMOD\twith', 'me\tPRP\t5\tPMOD\tme',
-                                  '?\t.\t0\tP\t?','']
-
     input_file = abspath(join(_my_dir, '..', 'examples', '{}.txt'.format(prefix)))
     output_file = abspath(join(_my_dir, '..', 'examples', '{}.dep'.format(prefix)))
 
@@ -113,17 +102,14 @@ def check_dep_parse_file(tokenize=False,
     with open(output_file, 'r') as outf:
         output = [l.strip() for l in outf.readlines()]
 
-    if with_lemmas:
-        assert_equal(output, correct_output_with_lemmas)
-    else:
-        assert_equal(output, correct_output)
+    assert_equal(output, correct_output)
 
 
-def test_dep_parse_file():
+def test_dep_parse_file_no_wordnet():
     for (tokenize, with_lemmas, tagged) in product([True, False],
                                                    [True, False],
                                                    [True, False]):
-        yield (check_dep_parse_file,
+        yield (check_dep_parse_file_no_wordnet,
                tokenize,
                with_lemmas,
                tagged)
