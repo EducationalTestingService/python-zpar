@@ -5,8 +5,8 @@ dependencies:
     - "~/english-models"
   override:
     - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-    - [[ ! -d ${HOME}/english-models ]] && wget https://github.com/frcchang/zpar/releases/download/v0.7.5/english-models.zip -O ${HOME}/english-models.zip
-    - [[ ! -d ${HOME}/english-models ]] && unzip ${HOME}/english-models.zip -d ${HOME}
+    - if [ ! -d ${HOME}/english-models ]; then wget https://github.com/frcchang/zpar/releases/download/v0.7.5/english-models.zip -O ${HOME}/english-models.zip; fi
+    -  if [ ! -d ${HOME}/english-models ]; then unzip ${HOME}/english-models.zip -d ${HOME}; fi
     - chmod +x miniconda.sh
     - ./miniconda.sh -b -f
     - ${HOME}/miniconda3/bin/conda config --add channels desilinguist
