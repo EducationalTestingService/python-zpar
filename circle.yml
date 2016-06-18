@@ -25,5 +25,5 @@ dependencies:
 # Run test
 test:
   override:
-    - case $CIRCLE_NODE_INDEX in 0) ${HOME}/miniconda3/bin/nosetests -v tests/test_tagger.py ;; 1) ${HOME}/miniconda3/bin/nosetests -v tests/test_parser.py ;; 2) ${HOME}/miniconda3/bin/nosetests -v tests/test_depparser.py ;; 3) NLTK_DATA= ${HOME}/miniconda3/bin/nosetests -v tests/test_depparser_no_wordnet.py ;; esac:
+    - case $CIRCLE_NODE_INDEX in 0) ${HOME}/miniconda3/bin/nosetests -v tests/test_tagger.py ;; 1) ${HOME}/miniconda3/bin/nosetests -v tests/test_parser.py ;; 2) NLTK_DATA=${HOME}/nltk/data ${HOME}/miniconda3/bin/nosetests -v tests/test_depparser.py ;; 3) NLTK_DATA= ${HOME}/miniconda3/bin/nosetests -v tests/test_depparser_no_wordnet.py ;; esac:
         parallel: true
