@@ -79,7 +79,7 @@ class DepParser(object):
                     param = 'v'
                 else:
                     param = 'n'
-                lemma = self.lemmatizer.lemmatize(word, param)
+                lemma = self.lemmatizer.lemmatize(word.lower(), param)
                 new_parse_line = '\t'.join(fields + [lemma])
                 new_parse_lines.append(new_parse_line)
             return '\n'.join(new_parse_lines) + '\n'
