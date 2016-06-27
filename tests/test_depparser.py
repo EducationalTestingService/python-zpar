@@ -72,7 +72,7 @@ def check_dep_parse_sentence(tokenize=False,
             sentence = "I 'm going to the market ."
 
     correct_output = "I\tPRP\t1\tSUB\n'm\tVBP\t-1\tROOT\ngoing\tVBG\t1\tVC\nto\tTO\t2\tVMOD\nthe\tDT\t5\tNMOD\nmarket\tNN\t3\tPMOD\n.\t.\t1\tP\n"
-    correct_output_with_lemmas = "I\tPRP\t1\tSUB\tI\n'm\tVBP\t-1\tROOT\t'm\ngoing\tVBG\t1\tVC\tgo\nto\tTO\t2\tVMOD\tto\nthe\tDT\t5\tNMOD\tthe\nmarket\tNN\t3\tPMOD\tmarket\n.\t.\t1\tP\t.\n"
+    correct_output_with_lemmas = "I\tPRP\t1\tSUB\ti\n'm\tVBP\t-1\tROOT\t'm\ngoing\tVBG\t1\tVC\tgo\nto\tTO\t2\tVMOD\tto\nthe\tDT\t5\tNMOD\tthe\nmarket\tNN\t3\tPMOD\tmarket\n.\t.\t1\tP\t.\n"
     if not tagged:
         parsed_sentence = depparser.dep_parse_sentence(sentence,
                                                        tokenize=tokenize,
@@ -124,10 +124,10 @@ def check_dep_parse_file(tokenize=False,
                       'with\tIN\t4\tVMOD', 'me\tPRP\t5\tPMOD',
                       '?\t.\t0\tP', '']
 
-    correct_output_with_lemmas = ['I\tPRP\t1\tSUB\tI', 'am\tVBP\t-1\tROOT\tbe',
+    correct_output_with_lemmas = ['I\tPRP\t1\tSUB\ti', 'am\tVBP\t-1\tROOT\tbe',
                                   'going\tVBG\t1\tVC\tgo', 'to\tTO\t2\tVMOD\tto',
                                   'the\tDT\t5\tNMOD\tthe', 'market\tNN\t3\tPMOD\tmarket',
-                                  '.\t.\t1\tP\t.', '', 'Are\tVBP\t-1\tROOT\tAre',
+                                  '.\t.\t1\tP\t.', '', 'Are\tVBP\t-1\tROOT\tbe',
                                   'you\tPRP\t0\tSUB\tyou', 'going\tVBG\t0\tVMOD\tgo',
                                   'to\tTO\t4\tVMOD\tto', 'come\tVB\t2\tVMOD\tcome',
                                   'with\tIN\t4\tVMOD\twith', 'me\tPRP\t5\tPMOD\tme',
