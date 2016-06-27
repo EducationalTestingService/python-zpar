@@ -7,19 +7,55 @@ Run unit tests for the ZPar tagger.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import glob
+import os
+
 from io import open
 from os.path import abspath, dirname, join
 
 from nose.tools import assert_equal
+from zpar import ZPar
 
 _my_dir = abspath(dirname(__file__))
+
+z = None
+tagger = None
+
+def setUp():
+    """
+    set up things we need for the tests
+    """
+    global z, tagger
+
+    assert 'ZPAR_MODEL_DIR' in os.environ
+
+    model_dir = os.environ['ZPAR_MODEL_DIR']
+
+    z = ZPar(model_dir)
+    tagger = z.get_tagger()
+
+def tearDown():
+    """
+    Clean up after the tests
+    """
+    global z, tagger
+
+    if z:
+        z.close()
+        del tagger
+        del z
+
+    # delete all the files we may have created
+    data_dir = abspath(join(_my_dir, '..', 'examples'))
+    for f in glob.glob(join(data_dir, 'test*.tag')):
+        os.unlink(f)
 
 
 def check_tag_sentence(tokenize=False):
     """
     Check tag_sentence method with and without tokenization
     """
-    from tests import tagger
+    global tagger
 
     sentence = "I'm going to the market." if tokenize else "I 'm going to the market ."
     correct_output = "I/PRP 'm/VBP going/VBG to/TO the/DT market/NN ./."
@@ -38,7 +74,7 @@ def check_tag_file(tokenize=False):
     Check tag_file method with and without tokenization
     """
 
-    from tests import tagger
+    global tagger
 
     prefix = 'test' if tokenize else 'test_tokenized'
 

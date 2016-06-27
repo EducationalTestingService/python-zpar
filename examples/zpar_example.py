@@ -39,6 +39,12 @@ def main():
         dep_parsed_sent = depparser.dep_parse_sentence("Do n't you want to come with me to the market ?", tokenize=False)
         print_(dep_parsed_sent)
 
+        # get the dependency parse of an already tokenized sentence
+        # and include lemma information (assuming you have NLTK as well
+        # as its WordNet corpus installed)
+        dep_parsed_sent = depparser.dep_parse_sentence("Do n't you want to come with me to the market ?", tokenize=False, with_lemmas=True)
+        print_(dep_parsed_sent)
+
         # compute POS tags for all sentences in "test.txt"
         # and write the output to "test.tag". Note that the
         # file contains a single sentence per line.
