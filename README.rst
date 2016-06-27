@@ -112,6 +112,13 @@ Here's a small example of how to use python-zpar:
         dep_parsed_sent = depparser.dep_parse_sentence("Do n't you want to come with me to the market ?", tokenize=False)
         print_(dep_parsed_sent)
 
+        # get the dependency parse of an already tokenized sentence
+        # and include lemma information (assuming you have NLTK as well
+        # as its WordNet corpus installed)
+        dep_parsed_sent = depparser.dep_parse_sentence("Do n't you want to come with me to the market ?", tokenize=False, with_lemmas=True)
+        print_(dep_parsed_sent)
+
+
 The above code sample produces the following output:
 
 .. code-block::
@@ -140,6 +147,19 @@ The above code sample produces the following output:
     the     DT   10  NMOD
     market  NN   8   PMOD
     ?       .    0   P
+
+    Do      VBP  -1  ROOT   do
+    n't     RB   0   VMOD   n't
+    you     PRP  0   SUB    you
+    want    VBP  0   VMOD   want
+    to      TO   5   VMOD   to
+    come    VB   3   VMOD   come
+    with    IN   5   VMOD   with
+    me      PRP  6   PMOD   me
+    to      TO   5   VMOD   to
+    the     DT   10  NMOD   the
+    market  NN   8   PMOD   market
+    ?       .    0   P      ?
 
 
 Detailed usage with comments is shown in the included file
