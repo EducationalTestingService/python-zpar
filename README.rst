@@ -29,6 +29,10 @@ python-zpar uses
 cool foreign function library bundled with Python that allows calling
 functions in C DLLs or shared libraries directly.
 
+**IMPORTANT**: As of now, python-zpar only works with the English zpar models
+since the interface to the Chinese models is different than the English ones.
+Pull requests are welcome!
+
 Installation
 ~~~~~~~~~~~~
 
