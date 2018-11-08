@@ -77,6 +77,8 @@ or
 If you are curious about what the C functions in the shared library
 module look like, see ``src/zpar.lib.cpp``.
 
+**NOTE**: If you are using macOS Mojave, you will need to do an extra step before running the ``pip`` install command above. Starting with Mojave, Apple has stopped installing the C/C++ system header files into ``/usr/include``. As a workaround, they have provided the package ``/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg`` that you must install to get the system headers back in the usual place before python-zpar can be compiled. For more details, please read the Command Line Tools section of the `Xcode 10 release notes <https://developer.apple.com/documentation/xcode_release_notes/xcode_10_release_notes>`__
+
 Usage
 ~~~~~
 
