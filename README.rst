@@ -56,28 +56,30 @@ with pip:
 
     pip install python-zpar
 
-**IMPORTANT**: On OS X, the installation will only work with ``gcc``
+**READ BELOW IF YOU ARE USING macOS**
+
+1. On macOS, the installation will only work with ``gcc``
 installed using either `macports <http://www.macports.org>`__ or
 `homebrew <http://brew.sh/>`__. The zpar source cannot be compiled with
 ``clang``. If you are having trouble compiling the code after cloning
 the repository or installing the package using pip, you can try
 to explicitly override the C++ compiler:
 
-.. code-block:: bash
+    .. code-block:: bash
 
-    CXX=<path to c++ compiler> make -e
+        CXX=<path to c++ compiler> make -e
 
-or
+    or
 
-.. code-block:: bash
+    .. code-block:: bash
 
-    CXX=<path to c++ compiler> pip install python-zpar
+        CXX=<path to c++ compiler> pip install python-zpar
 
 
-If you are curious about what the C functions in the shared library
-module look like, see ``src/zpar.lib.cpp``.
+    If you are curious about what the C functions in the shared library
+    module look like, see ``src/zpar.lib.cpp``.
 
-**NOTE**: If you are using macOS Mojave, you will need to do an extra step before running the ``pip`` install command above. Starting with Mojave, Apple has stopped installing the C/C++ system header files into ``/usr/include``. As a workaround, they have provided the package ``/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg`` that you must install to get the system headers back in the usual place before python-zpar can be compiled. For more details, please read the Command Line Tools section of the `Xcode 10 release notes <https://developer.apple.com/documentation/xcode_release_notes/xcode_10_release_notes>`__
+2. If you are using macOS Mojave, you will need an extra step before running the ``pip`` install command above. Starting with Mojave, Apple has stopped installing the C/C++ system header files into ``/usr/include``. As a workaround, they have provided the package ``/Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg`` that you must install to get the system headers back in the usual place before python-zpar can be compiled. For more details, please read the Command Line Tools section of the `Xcode 10 release notes <https://developer.apple.com/documentation/xcode_release_notes/xcode_10_release_notes>`__
 
 Usage
 ~~~~~
