@@ -58,12 +58,7 @@ with pip:
 
 **READ BELOW IF YOU ARE USING macOS**
 
-1. On macOS, the installation will only work with ``gcc``
-installed using either `macports <http://www.macports.org>`__ or
-`homebrew <http://brew.sh/>`__. The zpar source cannot be compiled with
-``clang``. If you are having trouble compiling the code after cloning
-the repository or installing the package using pip, you can try
-to explicitly override the C++ compiler:
+1. On macOS, the installation will only work with ``gcc`` installed using either `macports <http://www.macports.org>`__ or `homebrew <http://brew.sh/>`__. The zpar source cannot be compiled with ``clang``. If you are having trouble compiling the code after cloning the repository or installing the package using pip, you can try to explicitly override the C++ compiler:
 
     .. code-block:: bash
 
