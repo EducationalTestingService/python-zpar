@@ -1,0 +1,54 @@
+version: 2
+jobs:
+
+  build:
+    environment:
+      ZPAR_MODEL_DIR: ${HOME}/english-models
+    docker:
+      - image: buildpack-deps:trusty
+    working_directory: ~/repo
+    parallelism: 4
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - deps-and-models
+      - run: rm -r ~/repo/artifacts
+      - run: mkdir ~/repo/artifacts
+      - run:
+          name: Install miniconda and dependencies
+          command: |
+            wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+            chmod +x miniconda.sh
+            ./miniconda.sh -b -f
+            ~/miniconda3/bin/conda config --add channels desilinguist
+            ~/miniconda3/bin/conda update --yes conda
+            ~/miniconda3/bin/conda install --yes six nose nltk
+            mkdir -p ~/nltk/data
+            ~/miniconda3/bin/python -m nltk.downloader wordnet -d ~/nltk/data
+      - run:
+          name: Download ZPar models
+          command: |
+            if [ ! -d ${HOME}/english-models ]; then wget https://github.com/frcchang/zpar/releases/download/v0.7.5/english-models.zip -O ${HOME}/english-models.zip; fi
+            if [ ! -d ${HOME}/english-models ]; then unzip ${HOME}/english-models.zip -d ${HOME}; fi
+      - run:
+          name: Install python-zpar in editable mode
+          command: |
+            make python-zpar
+            ~/miniconda3/bin/pip install -e .
+
+      - save_cache:
+          paths:
+            - "~/miniconda3/pkgs"
+            - "~/english-models"
+          key: deps-and-models
+
+      - run:
+          name: Run tests
+          command: |
+            TESTFILES=$(circleci tests glob "tests/test_*.py" | circleci tests split)
+            ~/miniconda3/bin/nosetests -v ${TESTFILES}
+
+      - store_artifacts:
+          path:  ~/repo/artifacts
+          destination:  artifacts
