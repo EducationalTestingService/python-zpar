@@ -48,6 +48,7 @@ jobs:
           name: Run tests
           command: |
             TESTFILES=$(circleci tests glob "tests/test_*.py" | circleci tests split)
+            echo ${TESTFILES}
             ~/miniconda3/bin/nosetests -v ${TESTFILES}
 
       - store_artifacts:
