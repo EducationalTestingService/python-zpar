@@ -13,8 +13,8 @@ jobs:
       - restore_cache:
           keys:
           - deps-and-models
+      - run: mkdir -p ~/repo/artifacts
       - run: rm -r ~/repo/artifacts
-      - run: mkdir ~/repo/artifacts
       - run:
           name: Install miniconda and dependencies
           command: |
