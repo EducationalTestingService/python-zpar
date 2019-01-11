@@ -29,8 +29,8 @@ jobs:
       - run:
           name: Download ZPar models
           command: |
-            if [ ! -d ${HOME}/english-models ]; then wget https://github.com/frcchang/zpar/releases/download/v0.7.5/english-models.zip -O ~/english-models.zip; fi
-            if [ ! -d ${HOME}/english-models ]; then unzip ~/english-models.zip -d ${HOME}; fi
+            if [ ! -d ~/english-models ]; then wget https://github.com/frcchang/zpar/releases/download/v0.7.5/english-models.zip -O ~/english-models.zip; fi
+            if [ ! -d ~/english-models ]; then unzip ~/english-models.zip -d ${HOME}; fi
       - run:
           name: Install python-zpar in editable mode
           command: |
