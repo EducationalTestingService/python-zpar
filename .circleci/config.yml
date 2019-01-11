@@ -4,6 +4,7 @@ jobs:
   build:
     environment:
       ZPAR_MODEL_DIR: /root/english-models
+      NLTK_DATA: /root/nltk/data
     docker:
       - image: buildpack-deps:trusty
     working_directory: ~/repo
