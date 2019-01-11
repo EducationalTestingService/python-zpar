@@ -3,7 +3,7 @@ jobs:
 
   build:
     environment:
-      ZPAR_MODEL_DIR: ${HOME}/english-models
+      ZPAR_MODEL_DIR: ~/english-models
     docker:
       - image: buildpack-deps:trusty
     working_directory: ~/repo
