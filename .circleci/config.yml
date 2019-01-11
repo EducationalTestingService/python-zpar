@@ -48,7 +48,7 @@ jobs:
           name: Run tests
           command: |
             TESTFILES=$(circleci tests glob "tests/test_*.py" | circleci tests split)
-            echo ${TESTFILES}
+            if [[ ${TESTFILES} == *_no_wordnet.py ]]; then NLTK_DATA= ; fi
             ~/miniconda3/bin/nosetests -v ${TESTFILES}
 
       - store_artifacts:
