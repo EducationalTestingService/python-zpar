@@ -1,4 +1,6 @@
-**NOTE**: This project is no longer under active development since there are now
+NOTE
+~~~~
+This project is no longer under active development since there are now
 really nice pure Python parsers such as `Stanza <https://stanfordnlp.github.io/stanza/index.html>`__ and `Spacy <https://spacy.io>`__. The repository will remain here for archival purposes and the `PyPI <https://pypi.org/project/python-zpar/>`__ package will continue to be available.
 
 Introduction
