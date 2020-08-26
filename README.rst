@@ -1,5 +1,5 @@
 **NOTE**: This project is no longer under active development since there are now
-really nice pure Python parsers such as [Stanza](https://stanfordnlp.github.io/stanza/index.html) and [Spacy](https://spacy.io). The repository will remain here for archival purposes and the PyPI and conda packages will also continue to be available.
+really nice pure Python parsers such as `Stanza <https://stanfordnlp.github.io/stanza/index.html>`__ and `Spacy <https://spacy.io>`__. The repository will remain here for archival purposes and the PyPI and conda packages will also continue to be available.
 
 Introduction
 ~~~~~~~~~~~~
