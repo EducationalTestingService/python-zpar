@@ -2,11 +2,14 @@ package:
     name: python-zpar
     version: "0.9.5"
 
+source:
+  path: ../../../python-zpar
+
 build:
     number: {{environ.get('BINSTAR_BUILD', 0)}}
     script:
-      - cd $RECIPE_DIR
-      - $PYTHON setup.py install
+      - cd $SRC_DIR
+      - "{{ PYTHON }} setup.py install"
 
 requirements:
     build:
