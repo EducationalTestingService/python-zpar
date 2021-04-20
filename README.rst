@@ -46,6 +46,8 @@ Those are the two platforms I use everyday. I am happy to try to get
 python-zpar working on other platforms over time. Pull requests are
 welcome!
 
+Please make sure that ``make`` and ``wget`` are installed as they are both needed to properly build python-zpar.
+
 In order for python-zpar to work, it requires C functions that can be
 called directly. Since the only user-exposed entry point in ZPar is the
 command line client, I needed to write a shared library that would have
@@ -60,6 +62,7 @@ with pip:
 .. code-block:: bash
 
     pip install python-zpar
+
 
 IF YOU ARE USING macOS
 ======================
